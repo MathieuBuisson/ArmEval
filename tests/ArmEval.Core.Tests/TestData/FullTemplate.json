@@ -1,0 +1,236 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "clusterName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Azure AKS resource."
+      },
+      "minLength": 3,
+      "maxLength": 29
+    },
+    "logAnalyticsWorkspaceLocation": {
+      "type": "string",
+      "metadata": {
+        "description": "Azure region where the Log Analytics workspace will be deployed"
+      }
+    },
+    "environmentType": {
+      "type": "string",
+      "metadata": {
+        "description": "The type of environment this cluster is for. Some policies may apply only to 'Production' environments."
+      },
+      "allowedValues": [
+        "Dev",
+        "Test",
+        "QA",
+        "Repro",
+        "Staging",
+        "Prod"
+      ]
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Azure region where the AKS cluster and related resources will be deployed."
+      }
+    },
+    "clusterVnetAddressSpace": {
+      "type": "string",
+      "metadata": {
+        "description": "Virtual network IP address range, in CIDR notation (for example: 10.129.0.0/16)."
+      }
+    },
+    "kubernetesVersion": {
+      "type": "string",
+      "defaultValue": "1.12.5",
+      "metadata": {
+        "description": "The version of Kubernetes software running in the AKS Cluster."
+      }
+    },
+    "nodeCount": {
+      "type": "int",
+      "defaultValue": 3,
+      "metadata": {
+        "description": "The number of worker nodes in the AKS cluster."
+      }
+    },
+    "nodeSize": {
+      "type": "string",
+      "defaultValue": "Standard_D4s_v3",
+      "allowedValues": [
+        "Standard_B2ms",
+        "Standard_B4ms",
+        "Standard_D2s_v3",
+        "Standard_D4s_v3",
+        "Standard_D8s_v3",
+        "Standard_E2s_v3",
+        "Standard_E4s_v3",
+        "Standard_F2s_v2",
+        "Standard_F4s_v2",
+        "Standard_DS2_v2",
+        "Standard_DS3_v2"
+      ],
+      "metadata": {
+        "description": "The VM size for the AKS worker nodes."
+      }
+    },
+    "osDiskSizeGB": {
+      "type": "int",
+      "minValue": 0,
+      "maxValue": 1024,
+      "defaultValue": 30,
+      "metadata": {
+        "description": "The OS disk size (GB) for the cluster nodes. If set to 0, the default osDisk size for the specified vmSize is applied."
+      }
+    },
+    "maxPodsPerNode": {
+      "type": "int",
+      "minValue": 110,
+      "maxValue": 250,
+      "defaultValue": 110,
+      "metadata": {
+        "description": "The maximum number of pods that can run on a node."
+      }
+    },
+    "servicePrincipalId": {
+      "type": "string",
+      "metadata": {
+        "description": "The application ID of the Service Principal used by the AKS cluster to access Azure resources."
+      }
+    },
+    "servicePrincipalSecret": {
+      "type": "securestring",
+      "metadata": {
+        "description": "The password of the Service Principal used by the AKS cluster to access Azure resources."
+      }
+    }
+  },
+  "variables": {
+    "logAnalyticsWorkspaceName": "[concat(parameters('clusterName'), '-monitoring')]",
+    "uniqueSuffix": "[uniqueString(resourceGroup().id, deployment().name)]",
+    "vnetName": "[concat('aks-vnet-', variables('uniqueSuffix'))]",
+    "subnetName": "[concat('aks-subnet-', variables('uniqueSuffix'))]",
+    "containerInsightsSolutionName": "[Concat('ContainerInsights(', variables('logAnalyticsWorkspaceName'), ')')]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.OperationalInsights/workspaces",
+      "name": "[variables('logAnalyticsWorkspaceName')]",
+      "apiVersion": "2015-11-01-preview",
+      "location": "[parameters('logAnalyticsWorkspaceLocation')]",
+      "properties": {
+        "sku": {
+          "name": "Standalone"
+        }
+      },
+      "tags": {
+        "Environment": "[parameters('environmentType')]"
+      }
+    },
+    {
+      "type": "Microsoft.OperationsManagement/solutions",
+      "name": "[variables('containerInsightsSolutionName')]",
+      "apiVersion": "2015-11-01-preview",
+      "location": "[parameters('logAnalyticsWorkspaceLocation')]",
+      "dependsOn": [
+        "[concat('Microsoft.OperationalInsights/workspaces/', variables('logAnalyticsWorkspaceName'))]"
+      ],
+      "properties": {
+        "workspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces/', variables('logAnalyticsWorkspaceName'))]"
+      },
+      "plan": {
+        "name": "[variables('containerInsightsSolutionName')]",
+        "publisher": "Microsoft",
+        "product": "OMSGallery/ContainerInsights",
+        "promotionCode": ""
+      }
+    },
+    {
+      "apiVersion": "2018-08-01",
+      "type": "Microsoft.Network/virtualNetworks",
+      "name": "[variables('vnetName')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[parameters('clusterVnetAddressSpace')]"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "[variables('subnetName')]",
+            "properties": {
+              "addressPrefix": "[replace(parameters('clusterVnetAddressSpace'), '/16', '/19')]"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.ContainerService/managedClusters",
+      "apiVersion": "2018-03-31",
+      "name": "[parameters('clusterName')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "kubernetesVersion": "[parameters('kubernetesVersion')]",
+        "dnsPrefix": "[parameters('clusterName')]",
+        "agentPoolProfiles": [
+          {
+            "name": "agentpool",
+            "count": "[parameters('nodeCount')]",
+            "vmSize": "[parameters('nodeSize')]",
+            "osType": "Linux",
+            "storageProfile": "ManagedDisks",
+            "osDiskSizeGB": "[parameters('osDiskSizeGB')]",
+            "maxPods": "[parameters('maxPodsPerNode')]",
+            "vnetSubnetID": "[concat(resourceId('Microsoft.Network/virtualNetworks', variables('vnetName')), '/subnets/', variables('subnetName'))]"
+          }
+        ],
+        "servicePrincipalProfile": {
+          "clientId": "[parameters('servicePrincipalId')]",
+          "secret": "[parameters('servicePrincipalSecret')]"
+        },
+        "enableRBAC": true,
+        "networkProfile": {
+          "networkPlugin": "azure",
+          "serviceCidr": "10.0.0.0/16",
+          "dnsServiceIP": "10.0.0.10",
+          "dockerBridgeCidr": "172.17.0.1/16"
+        },
+        "addonProfiles": {
+          "omsagent": {
+            "enabled": true,
+            "config": {
+              "loganalyticsworkspaceresourceid": "[resourceId('Microsoft.OperationalInsights/workspaces/', variables('logAnalyticsWorkspaceName'))]"
+            }
+          }
+        }
+      },
+      "tags": {
+        "Environment": "[parameters('environmentType')]"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Network/virtualNetworks/', variables('vnetName'))]",
+        "[concat('Microsoft.OperationalInsights/workspaces/', variables('logAnalyticsWorkspaceName'))]",
+        "[concat('Microsoft.OperationsManagement/solutions/', variables('containerInsightsSolutionName'))]"
+      ]
+    }
+  ],
+  "outputs": {
+    "kubernetesMasterFqdn": {
+      "type": "string",
+      "value": "[reference(concat('Microsoft.ContainerService/managedClusters/', parameters('clusterName'))).fqdn]"
+    },
+    "aksResourceId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.ContainerService/managedClusters', parameters('clusterName'))]"
+    },
+    "aksInfraResourceGroup": {
+      "type": "string",
+      "value": "[reference(parameters('clusterName')).nodeResourceGroup]"
+    }
+  }
+}
