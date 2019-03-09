@@ -13,14 +13,7 @@ namespace ArmEval.Core
             get { return text; }
             set {
                 var result = Validate();
-                if (result.Success)
-                {
-                    text = value;
-                }
-                else
-                {
-                    throw result.ExceptionList[0];
-                }
+                text = result.Success ? value : throw result.ExceptionList[0];
             }
         }
 
