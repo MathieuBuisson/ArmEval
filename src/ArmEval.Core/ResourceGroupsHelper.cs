@@ -8,6 +8,11 @@ namespace ArmEval.Core
 {
     public static class ResourceGroupsHelper
     {
+        public static bool Exists(IResourceManagementClient client, string resourceGroupName)
+        {
+            return client.ResourceGroups.CheckExistence(resourceGroupName);
+        }
+
         public static void Create(IResourceManagementClient client, string resourceGroupName, string location)
         {
             var resourceGroup = new ResourceGroup();
@@ -18,7 +23,7 @@ namespace ArmEval.Core
 
         public static void CreateIfNotExists(IResourceManagementClient client, string resourceGroupName, string location)
         {
-            if (!client.ResourceGroups.CheckExistence(resourceGroupName))
+            if (!Exists(client, resourceGroupName))
             {
                 Console.WriteLine(string.Format("Creating resource group '{0}' in '{1}'", resourceGroupName, location));
                 Create(client, resourceGroupName, location);
@@ -31,7 +36,7 @@ namespace ArmEval.Core
 
         public static void DeleteIfExists(IResourceManagementClient client, string resourceGroupName)
         {
-            if (client.ResourceGroups.CheckExistence(resourceGroupName))
+            if (Exists(client, resourceGroupName))
             {
                 Console.WriteLine(string.Format("Deleting resource group '{0}'", resourceGroupName));
                 client.ResourceGroups.Delete(resourceGroupName);

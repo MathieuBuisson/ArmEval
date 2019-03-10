@@ -6,23 +6,35 @@ using Xunit;
 
 namespace ArmEval.Core.Tests
 {
+    [TestCaseOrderer("ArmEval.Core.Tests.NumericOrderer", "ArmEval.Core.Tests")]
     public class ResourceGroupsHelperTests
     {
         private readonly string resourceGroupName = "ArmEvalTests-rg";
         private readonly string location = "North Europe";
 
-        [Fact]
+        [Fact, Order(1)]
+        public void Exists_ResourceGroupDoesNotExist_ReturnsFalse()
+        {
+            using (var client = new ArmClient().Create())
+            {
+                var actual = ResourceGroupsHelper.Exists(client, resourceGroupName);
+
+                Assert.False(actual);
+            }
+        }
+
+        [Fact, Order(2)]
         public void CreateIfNotExists_ResourceGroupDoesNotExist_CreatesIt()
         {
             using (var client = new ArmClient().Create())
             {
                 ResourceGroupsHelper.CreateIfNotExists(client, resourceGroupName, location);
 
-                Assert.True(client.ResourceGroups.CheckExistence(resourceGroupName));
+                Assert.True(ResourceGroupsHelper.Exists(client, resourceGroupName));
             }
         }
 
-        [Fact]
+        [Fact, Order(3)]
         public void CreateIfNotExists_ResourceGroupExists_DoesNotThrow()
         {
             using (var client = new ArmClient().Create())
@@ -35,17 +47,24 @@ namespace ArmEval.Core.Tests
             }
         }
 
-        [Fact]
+        [Fact, Order(4)]
         public void DeleteIfExists()
         {
             using (var client = new ArmClient().Create())
             {
-                var existenceBefore = client.ResourceGroups.CheckExistence(resourceGroupName);
+                var exists = ResourceGroupsHelper.Exists(client, resourceGroupName);
                 ResourceGroupsHelper.DeleteIfExists(client, resourceGroupName);
-                var existenceAfter = client.ResourceGroups.CheckExistence(resourceGroupName);
+                Assert.True(exists);
+            }
+        }
 
-                Assert.True(existenceBefore);
-                Assert.False(existenceAfter);
+        [Fact, Order(5)]
+        public void Exists_ResourceGroupDeleted_ReturnsFalse()
+        {
+            using (var client = new ArmClient().Create())
+            {
+                var actual = ResourceGroupsHelper.Exists(client, resourceGroupName);
+                Assert.False(actual);
             }
         }
     }
