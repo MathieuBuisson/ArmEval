@@ -6,7 +6,7 @@ using System.Text;
 
 namespace ArmEval.Core
 {
-    public class ArmTemplateBase
+    public class ArmTemplate
     {
         [JsonProperty("$schema")]
         public string Schema { get; set; }
@@ -24,16 +24,28 @@ namespace ArmEval.Core
         public List<object> Resources { get; set; }
 
         [JsonProperty("outputs")]
-        public IDictionary<string, object> Outputs { get; set; }
+        public IDictionary<string, ArmTemplateOutput> Outputs { get; set; }
 
-        public ArmTemplateBase()
+        public ArmTemplate()
         {
             Schema = @"https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#";
             ContentVersion = "1.0.0.0";
             Parameters = new Dictionary<string, object>();
             Variables = new Dictionary<string, object>();
             Resources = new List<object>();
-            Outputs = new Dictionary<string, object>();
+            Outputs = new Dictionary<string, ArmTemplateOutput>();
+        }
+
+        public void AddExpression(ArmTemplateExpression expression, ArmValueTypes expectedOutputType)
+        {
+            var outputName = "expression";
+            var outputTypeName = expectedOutputType.ToString();
+            var outputObj = new ArmTemplateOutput();
+            outputObj.Type = outputTypeName;
+            outputObj.Value = expression.Text;
+            
+            var output = new KeyValuePair<string, ArmTemplateOutput>(outputName, outputObj);
+            Outputs.Add(output);
         }
     }
 }
