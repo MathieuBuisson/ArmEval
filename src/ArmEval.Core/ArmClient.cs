@@ -6,18 +6,16 @@ using Microsoft.Rest.Azure.Authentication;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.UserSecrets;
 
-
 namespace ArmEval.Core
 {
     public class ArmClient
     {
-        public IConfiguration Config { get; set; }
         public string TenantId { get; set; }
         public string ClientId { get; set; }
         public string ClientSecret { get; set; }
         public string SubscriptionId { get; set; }
 
-        public ResourceManagementClient Create()
+        public IResourceManagementClient Create()
         {
             var creds = ApplicationTokenProvider.LoginSilentAsync(TenantId, ClientId, ClientSecret).Result;
             var resourceManagementClient = new ResourceManagementClient(creds);
@@ -25,15 +23,20 @@ namespace ArmEval.Core
             return resourceManagementClient;
         }
 
-        public ArmClient(string tenantId = null, string clientId = null, string clientSecret = null, string subscriptionId = null)
+        public ArmClient(string tenantId, string clientId, string clientSecret, string subscriptionId)
         {
-            Config = new ConfigurationBuilder()
-                .AddUserSecrets("72146dd3-c4ba-47e2-81a5-94b367d9c109")
-                .Build();
-            TenantId = tenantId ?? Config["TenantId"];
-            ClientId = clientId ?? Config["ClientId"];
-            ClientSecret = clientSecret ?? Config["ClientSecret"];
-            SubscriptionId = subscriptionId ?? Config["SubscriptionId"];
+            TenantId = tenantId;
+            ClientId = clientId;
+            ClientSecret = clientSecret;
+            SubscriptionId = subscriptionId;
+        }
+
+        public ArmClient(IConfiguration config)
+        {
+            TenantId = config["TenantId"];
+            ClientId = config["ClientId"];
+            ClientSecret = config["ClientSecret"];
+            SubscriptionId = config["SubscriptionId"];
         }
     }
 }

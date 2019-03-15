@@ -17,8 +17,8 @@ namespace ArmEval.Core
             }
         }
 
-        public List<string> VariableNames { get; private set; }
-        public List<string> ParameterNames { get; private set; }
+        public IEnumerable<string> VariableNames { get; private set; }
+        public IEnumerable<string> ParameterNames { get; private set; }
         public readonly Regex[] unsupportedFunctionsPatterns = {
             new Regex(@"resourceId\("),
             new Regex(@"reference\("),
@@ -67,7 +67,7 @@ namespace ArmEval.Core
             return outputs;
         }
 
-        private List<string> parseVariables(string text)
+        private IEnumerable<string> parseVariables(string text)
         {
             var variableNames = new List<string>();
 
@@ -75,16 +75,13 @@ namespace ArmEval.Core
             var matches = regex.Matches(text);
             if (matches.Count > 0)
             {
-                foreach (Match match in matches)
-                {
-                    var variableName = match.Groups["Variables"].Value;
-                    variableNames.Add(variableName);
-                }
+                matches.OfType<Match>().ToList()
+                    .ForEach(m => variableNames.Add(m.Groups["Variables"].Value));
             }
             return variableNames;
 
         }
-        private List<string> parseParameters(string text)
+        private IEnumerable<string> parseParameters(string text)
         {
             var paramNames = new List<string>();
 
@@ -92,11 +89,8 @@ namespace ArmEval.Core
             var matches = regex.Matches(text);
             if (matches.Count > 0)
             {
-                foreach (Match match in matches)
-                {
-                    var paramName = match.Groups["Parameters"].Value;
-                    paramNames.Add(paramName);
-                }
+                matches.OfType<Match>().ToList()
+                    .ForEach(m => paramNames.Add(m.Groups["Parameters"].Value));
             }
             return paramNames;
         }
