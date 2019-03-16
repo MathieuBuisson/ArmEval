@@ -4,24 +4,23 @@ using System.Collections.Generic;
 using System.Text;
 using Xunit;
 using Moq;
-using Microsoft.Extensions.Configuration;
 
 namespace ArmEval.Core.Tests
 {
-    public class ArmClientTests : IClassFixture<TestConfig>
+    public class ArmClientTests : IClassFixture<ArmClientTestConfig>
     {
 
-        private TestConfig testConfig;
+        private readonly ArmClientTestConfig testConfig;
 
-        public ArmClientTests(TestConfig config)
+        public ArmClientTests(ArmClientTestConfig config)
         {
             testConfig = config;
         }
 
         [Fact]
-        public void Constructor_WithIConfiguration_SetsConfigValuesFromConfig()
+        public void Constructor_WithIArmClientConfig_SetsConfigValuesFromConfig()
         {
-            var actual = new ArmClient(testConfig.Config);
+            var actual = new ArmClient(testConfig);
 
             Assert.NotNull(actual.TenantId);
             Assert.NotNull(actual.ClientId);
@@ -30,25 +29,36 @@ namespace ArmEval.Core.Tests
         }
 
         [Fact]
-        public void Constructor_WithIConfiguration_SetsPropertiesFromConfig()
+        public void Constructor_WithIArmClientConfig_SetsPropertiesFromConfig()
         {
-            var actual = new ArmClient(testConfig.Config);
+            var actual = new ArmClient(testConfig);
 
             Assert.Equal(testConfig.TenantId, actual.TenantId);
             Assert.Equal(testConfig.ClientId, actual.ClientId);
-            Assert.Equal(testConfig.Secret, actual.ClientSecret);
+            Assert.Equal(testConfig.ClientSecret, actual.ClientSecret);
             Assert.Equal(testConfig.Subscription, actual.SubscriptionId);
         }
 
         [Fact]
         public void Constructor_WithArguments_SetsPropertiesFromArgs()
         {
-            var actual = new ArmClient(testConfig.TenantId, testConfig.ClientId, testConfig.Secret, testConfig.Subscription);
+            var actual = new ArmClient(testConfig.TenantId, testConfig.ClientId, testConfig.ClientSecret, testConfig.Subscription);
 
             Assert.Equal(testConfig.TenantId, actual.TenantId);
             Assert.Equal(testConfig.ClientId, actual.ClientId);
-            Assert.Equal(testConfig.Secret, actual.ClientSecret);
+            Assert.Equal(testConfig.ClientSecret, actual.ClientSecret);
             Assert.Equal(testConfig.Subscription, actual.SubscriptionId);
+        }
+
+        [Fact]
+        public void Create_AuthenticatesSuccessfullyWithArm()
+        {
+            var config = new ArmClientConfig();
+            var armClient = new ArmClient(config);
+            using (var resourceManagementClient = armClient.Create())
+            {
+                Assert.NotNull(resourceManagementClient.Credentials);
+            }
         }
     }
 }

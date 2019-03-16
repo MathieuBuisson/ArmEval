@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.Azure.Management.ResourceManager;
 using Microsoft.Rest.Azure.Authentication;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.UserSecrets;
 
 namespace ArmEval.Core
 {
@@ -31,12 +29,12 @@ namespace ArmEval.Core
             SubscriptionId = subscriptionId;
         }
 
-        public ArmClient(IConfiguration config)
+        public ArmClient(IArmClientConfig config)
         {
-            TenantId = config["TenantId"];
-            ClientId = config["ClientId"];
-            ClientSecret = config["ClientSecret"];
-            SubscriptionId = config["SubscriptionId"];
+            TenantId = config.TenantId;
+            ClientId = config.ClientId;
+            ClientSecret = config.ClientSecret;
+            SubscriptionId = config.Subscription;
         }
     }
 }
