@@ -79,7 +79,8 @@ namespace ArmEval.Core.Tests
         [Theory()]
         [InlineData(@"[concat('string12', 'string34')]", ArmValueTypes.@string)]
         [InlineData(@"[mod(7, 3)]", ArmValueTypes.@int)]
-        public void AddExpression_ExpressionWithoutVariableOrParameter_AddsExpectedOutput(string text, ArmValueTypes outputType)
+        [InlineData(@"[not(equals(1, 10))]", ArmValueTypes.@bool)]
+        public void AddExpression_NoVariableOrParameter_AddsExpectedOutput(string text, ArmValueTypes outputType)
         {
             var template = new ArmTemplate();
             var expression = new ArmTemplateExpression(text);

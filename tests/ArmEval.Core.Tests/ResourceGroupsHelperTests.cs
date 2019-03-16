@@ -9,7 +9,7 @@ namespace ArmEval.Core.Tests
     [TestCaseOrderer("ArmEval.Core.Tests.NumericOrderer", "ArmEval.Core.Tests")]
     public class ResourceGroupsHelperTests : IClassFixture<ArmClientConfig>
     {
-        private readonly string resourceGroupName = "ArmEvalTests-rg";
+        private readonly string resourceGroupName = "ArmEvalRGHelper";
         private readonly string location = "North Europe";
         private readonly ArmClientConfig testConfig;
 

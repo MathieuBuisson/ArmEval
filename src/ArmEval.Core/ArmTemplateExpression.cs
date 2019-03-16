@@ -62,6 +62,9 @@ namespace ArmEval.Core
         public IDictionary<string, object> Invoke()
         {
             var outputs = new Dictionary<string, object>();
+            var template = new ArmTemplate();
+            var expression = new ArmTemplateExpression(text);
+
 
 
             return outputs;
