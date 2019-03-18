@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Newtonsoft.Json;
 
 namespace ArmEval.Core
 {
@@ -59,15 +60,13 @@ namespace ArmEval.Core
             return op;
         }
 
-        public IDictionary<string, object> Invoke()
+        public ArmTemplateOutput Invoke(ArmDeployment deployment)
         {
-            var outputs = new Dictionary<string, object>();
-            var template = new ArmTemplate();
-            var expression = new ArmTemplateExpression(text);
-
-
-
-            return outputs;
+            var deploymentResult = deployment.Invoke();
+            var outputObject = ((dynamic)deploymentResult.Properties.Outputs).expression;
+            
+            var output = JsonConvert.DeserializeObject<ArmTemplateOutput>(outputObject.ToString());
+            return output;
         }
 
         private IEnumerable<string> parseVariables(string text)

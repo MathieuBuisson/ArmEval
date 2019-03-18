@@ -5,8 +5,17 @@ using Xunit;
 
 namespace ArmEval.Core.Tests
 {
-    public class ArmTemplateExpressionTests
+    public class ArmTemplateExpressionTests : IClassFixture<ArmClientConfigExpressionTests>
     {
+        private readonly ArmClientConfigExpressionTests config;
+        private readonly string resourceGroupName;
+
+        public ArmTemplateExpressionTests(ArmClientConfigExpressionTests conf)
+        {
+            config = conf;
+            resourceGroupName = config.ResourceGroup;
+        }
+
         [Theory()]
         [InlineData(@"[uniqueString(resourceGroup().id, deployment().name)]")]
         [InlineData(@"[resourceGroup().name]")]
@@ -57,6 +66,27 @@ namespace ArmEval.Core.Tests
             Assert.Equal(text, actual.Text);
             Assert.Equal(expectedVariables, actual.VariableNames);
             Assert.Equal(expectedParameters, actual.ParameterNames);
+        }
+
+        [Theory()]
+        [InlineData(@"[concat('string12', 'string56')]", ArmValueTypes.@string, "string12string56")]
+        [InlineData(@"[mod(7, 3)]", ArmValueTypes.@int, "1")]
+        [InlineData(@"[mul(6, 3)]", ArmValueTypes.@int, "18")]
+        [InlineData(@"[contains(createArray('one', 'two'), 'two')]", ArmValueTypes.@bool, "true")]
+        [InlineData(@"[not(equals(1, 10))]", ArmValueTypes.@bool, "true")]
+        public void Invoke_NoVariableOrParameter_ReturnsExpectedOutput(
+            string text,
+            ArmValueTypes expectedOutputType,
+            string expectedOutputValue)
+        {
+            var expression = new ArmTemplateExpression(text);
+            var template = new ArmTemplate();
+            template.AddExpression(expression, expectedOutputType);
+            var deployment= new ArmDeployment(config.Client, config.ResourceGroup, template, config.Location);
+            var actual = expression.Invoke(deployment);
+
+            Assert.Equal(expectedOutputType.ToString(), actual.Type);
+            Assert.Equal(expectedOutputValue, actual.Value);
         }
     }
 }

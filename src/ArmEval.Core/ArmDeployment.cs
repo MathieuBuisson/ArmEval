@@ -13,13 +13,16 @@ namespace ArmEval.Core
         public string DeploymentName { get; }
         public ArmTemplate Template { get; set; }
         public Deployment Deployment { get; set; }
+        public string Location { get; set; }
+
 
         public ArmDeployment(IResourceManagementClient resourceManagementClient, string resourceGroupName,
-            ArmTemplate template)
+            ArmTemplate template, string location)
         {
             ResourceManagementClient = resourceManagementClient;
             ResourceGroupName = resourceGroupName;
             Template = template;
+            Location = location;
 
             var timeStamp = DateTime.Now.Ticks.ToString().Substring(13);
             DeploymentName = $"armeval-deployment-{timeStamp}";
@@ -36,6 +39,8 @@ namespace ArmEval.Core
 
         public DeploymentExtended Invoke()
         {
+            ResourceGroupsHelper.CreateIfNotExists(ResourceManagementClient, ResourceGroupName, Location);
+
             var result = ResourceManagementClient
                 .Deployments
                 .CreateOrUpdate(ResourceGroupName, DeploymentName, Deployment);

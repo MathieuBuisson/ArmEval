@@ -10,22 +10,23 @@ namespace ArmEval.Core.Tests
     [TestCaseOrderer("ArmEval.Core.Tests.NumericOrderer", "ArmEval.Core.Tests")]
     public class ArmDeploymentTests : IClassFixture<ArmClientConfigDeploymentTests>
     {
-        private readonly ArmClientConfigDeploymentTests testConfig;
+        private readonly ArmClientConfigDeploymentTests config;
         private readonly ArmTemplate emptyTemplate = new ArmTemplate();
 
-        public ArmDeploymentTests(ArmClientConfigDeploymentTests config)
+        public ArmDeploymentTests(ArmClientConfigDeploymentTests conf)
         {
-            testConfig = config;
+            config = conf;
         }
 
         [Fact, Order(1)]
         public void Constructor_SetsAllProperties()
         {
-            var actual = new ArmDeployment(testConfig.Client, testConfig.ResourceGroup, emptyTemplate);
+            var actual = new ArmDeployment(config.Client, config.ResourceGroup, emptyTemplate, config.Location);
 
-            Assert.Same(testConfig.Client, actual.ResourceManagementClient);
-            Assert.Same(testConfig.ResourceGroup, actual.ResourceGroupName);
+            Assert.Same(config.Client, actual.ResourceManagementClient);
+            Assert.Same(config.ResourceGroup, actual.ResourceGroupName);
             Assert.Same(emptyTemplate, actual.Template);
+            Assert.Same(config.Location, actual.Location);
             Assert.Matches(@"^armeval-deployment-\d+$", actual.DeploymentName);
             Assert.IsType<Deployment>(actual.Deployment);
         }
@@ -33,9 +34,8 @@ namespace ArmEval.Core.Tests
         [Fact, Order(2)]
         public void Invoke_EmptyTemplate_SucceedsWithEmptyOutputs()
         {
-            var deploy = new ArmDeployment(testConfig.Client, testConfig.ResourceGroup, emptyTemplate);
-            ResourceGroupsHelper.CreateIfNotExists(testConfig.Client, testConfig.ResourceGroup, testConfig.Location);
-            var actual = deploy.Invoke();
+            var deployment = new ArmDeployment(config.Client, config.ResourceGroup, emptyTemplate, config.Location);
+            var actual = deployment.Invoke();
 
             Assert.Equal("Succeeded", actual.Properties.ProvisioningState);
             Assert.Equal("{}", actual.Properties.Outputs.ToString());
