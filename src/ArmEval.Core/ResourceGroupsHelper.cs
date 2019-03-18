@@ -18,7 +18,6 @@ namespace ArmEval.Core
             var resourceGroup = new ResourceGroup();
             resourceGroup.Location = location;
             client.ResourceGroups.CreateOrUpdate(resourceGroupName, resourceGroup);
-
         }
 
         public static void CreateIfNotExists(IResourceManagementClient client, string resourceGroupName, string location)

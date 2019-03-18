@@ -10,7 +10,7 @@ namespace ArmEval.Core
         private string text;
         public string Text
         {
-            get { return text; }
+            get => text;
             set {
                 var result = Validate();
                 text = result.Success ? value : throw result.ExceptionList[0];

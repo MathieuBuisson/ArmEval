@@ -7,72 +7,46 @@ using Xunit;
 namespace ArmEval.Core.Tests
 {
     [TestCaseOrderer("ArmEval.Core.Tests.NumericOrderer", "ArmEval.Core.Tests")]
-    public class ResourceGroupsHelperTests : IClassFixture<ArmClientConfig>
+    public class ResourceGroupsHelperTests : IClassFixture<ArmClientConfigRGHelperTests>
     {
-        private readonly string resourceGroupName = "ArmEvalRGHelper";
-        private readonly string location = "North Europe";
-        private readonly ArmClientConfig testConfig;
+        private readonly ArmClientConfigRGHelperTests testConfig;
 
-        public ResourceGroupsHelperTests(ArmClientConfig config)
+        public ResourceGroupsHelperTests(ArmClientConfigRGHelperTests config)
         {
             testConfig = config;
         }
 
-
         [Fact, Order(1)]
         public void Exists_ResourceGroupDoesNotExist_ReturnsFalse()
         {
-            using (var client = new ArmClient(testConfig).Create())
-            {
-                var actual = ResourceGroupsHelper.Exists(client, resourceGroupName);
-
-                Assert.False(actual);
-            }
+            var actual = ResourceGroupsHelper.Exists(testConfig.Client, testConfig.ResourceGroup);
+            Assert.False(actual);
         }
 
         [Fact, Order(2)]
         public void CreateIfNotExists_ResourceGroupDoesNotExist_CreatesIt()
         {
-            using (var client = new ArmClient(testConfig).Create())
-            {
-                ResourceGroupsHelper.CreateIfNotExists(client, resourceGroupName, location);
-
-                Assert.True(ResourceGroupsHelper.Exists(client, resourceGroupName));
-            }
+            ResourceGroupsHelper.CreateIfNotExists(testConfig.Client, testConfig.ResourceGroup, testConfig.Location);
+            Assert.True(ResourceGroupsHelper.Exists(testConfig.Client, testConfig.ResourceGroup));
         }
 
         [Fact, Order(3)]
         public void CreateIfNotExists_ResourceGroupExists_DoesNotThrow()
         {
-            using (var client = new ArmClient(testConfig).Create())
-            {
-                ResourceGroupsHelper.CreateIfNotExists(client, resourceGroupName, location);
-                Action act = () => { ResourceGroupsHelper.CreateIfNotExists(client, resourceGroupName, location); };
-                var ex = Record.Exception(act);
+            ResourceGroupsHelper.CreateIfNotExists(testConfig.Client, testConfig.ResourceGroup, testConfig.Location);
+            Action act = () => {
+                ResourceGroupsHelper.CreateIfNotExists(testConfig.Client, testConfig.ResourceGroup, testConfig.Location);
+            };
+            var ex = Record.Exception(act);
 
-                Assert.Null(ex);
-            }
+            Assert.Null(ex);
         }
 
         [Fact, Order(4)]
-        public void DeleteIfExists()
+        public void Exists_ResourceGroupExists_ReturnsTrue()
         {
-            using (var client = new ArmClient(testConfig).Create())
-            {
-                var exists = ResourceGroupsHelper.Exists(client, resourceGroupName);
-                ResourceGroupsHelper.DeleteIfExists(client, resourceGroupName);
-                Assert.True(exists);
-            }
-        }
-
-        [Fact, Order(5)]
-        public void Exists_ResourceGroupDeleted_ReturnsFalse()
-        {
-            using (var client = new ArmClient(testConfig).Create())
-            {
-                var actual = ResourceGroupsHelper.Exists(client, resourceGroupName);
-                Assert.False(actual);
-            }
+            var exists = ResourceGroupsHelper.Exists(testConfig.Client, testConfig.ResourceGroup);
+            Assert.True(exists);
         }
     }
 }

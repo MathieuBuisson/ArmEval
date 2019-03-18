@@ -8,46 +8,37 @@ using Xunit;
 namespace ArmEval.Core.Tests
 {
     [TestCaseOrderer("ArmEval.Core.Tests.NumericOrderer", "ArmEval.Core.Tests")]
-    public class ArmDeploymentTests : IClassFixture<ArmClientConfig>
+    public class ArmDeploymentTests : IClassFixture<ArmClientConfigDeploymentTests>
     {
-        private readonly string resourceGroupName = "ArmEvalDeploy";
-        private readonly string location = "North Europe";
-        private readonly ArmClientConfig testConfig;
+        private readonly ArmClientConfigDeploymentTests testConfig;
         private readonly ArmTemplate emptyTemplate = new ArmTemplate();
 
-        public ArmDeploymentTests(ArmClientConfig config)
+        public ArmDeploymentTests(ArmClientConfigDeploymentTests config)
         {
             testConfig = config;
         }
 
-
         [Fact, Order(1)]
         public void Constructor_SetsAllProperties()
         {
-            using (var client = new ArmClient(testConfig).Create())
-            {
-                var actual = new ArmDeployment(client, resourceGroupName, emptyTemplate);
+            var actual = new ArmDeployment(testConfig.Client, testConfig.ResourceGroup, emptyTemplate);
 
-                Assert.Same(client, actual.ResourceManagementClient);
-                Assert.Same(resourceGroupName, actual.ResourceGroupName);
-                Assert.Same(emptyTemplate, actual.Template);
-                Assert.StartsWith("armeval-deployment-", actual.DeploymentName);
-                Assert.IsType<Deployment>(actual.Deployment);
-            }
+            Assert.Same(testConfig.Client, actual.ResourceManagementClient);
+            Assert.Same(testConfig.ResourceGroup, actual.ResourceGroupName);
+            Assert.Same(emptyTemplate, actual.Template);
+            Assert.Matches(@"^armeval-deployment-\d+$", actual.DeploymentName);
+            Assert.IsType<Deployment>(actual.Deployment);
         }
 
         [Fact, Order(2)]
         public void Invoke_EmptyTemplate_SucceedsWithEmptyOutputs()
         {
-            using (var client = new ArmClient(testConfig).Create())
-            {
-                var deploy = new ArmDeployment(client, resourceGroupName, emptyTemplate);
-                ResourceGroupsHelper.CreateIfNotExists(client, resourceGroupName, location);
-                var actual = deploy.Invoke();
+            var deploy = new ArmDeployment(testConfig.Client, testConfig.ResourceGroup, emptyTemplate);
+            ResourceGroupsHelper.CreateIfNotExists(testConfig.Client, testConfig.ResourceGroup, testConfig.Location);
+            var actual = deploy.Invoke();
 
-                Assert.Equal("Succeeded", actual.Properties.ProvisioningState);
-                Assert.Equal("{}", actual.Properties.Outputs.ToString());
-            }
+            Assert.Equal("Succeeded", actual.Properties.ProvisioningState);
+            Assert.Equal("{}", actual.Properties.Outputs.ToString());
         }
     }
 }

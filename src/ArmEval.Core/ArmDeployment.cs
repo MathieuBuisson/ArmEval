@@ -21,7 +21,7 @@ namespace ArmEval.Core
             ResourceGroupName = resourceGroupName;
             Template = template;
 
-            var timeStamp = DateTime.Now.ToString("MddHHmm");
+            var timeStamp = DateTime.Now.Ticks.ToString().Substring(13);
             DeploymentName = $"armeval-deployment-{timeStamp}";
 
             Deployment = new Deployment();
