@@ -47,5 +47,15 @@ namespace ArmEval.Core
             var output = new KeyValuePair<string, ArmTemplateOutput>(outputName, outputObj);
             Outputs.Add(output);
         }
+
+        public void AddInputVariables(List<ArmTemplateVariable> inputVariables)
+        {
+
+        }
+
+        public void AddInputParameters(List<ArmTemplateParameter> inputParameters)
+        {
+
+        }
     }
 }
