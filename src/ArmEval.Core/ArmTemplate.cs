@@ -50,12 +50,12 @@ namespace ArmEval.Core
 
         public void AddInputVariables(List<ArmTemplateVariable> inputVariables)
         {
-
+            inputVariables.ForEach(v => Variables.Add(v.Name, v.Value));
         }
 
         public void AddInputParameters(List<ArmTemplateParameter> inputParameters)
         {
-
+            inputParameters.ForEach(p => Parameters.Add(p.Name, p.Value));
         }
     }
 }
