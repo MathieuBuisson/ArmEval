@@ -11,7 +11,7 @@ namespace ArmEval.Core.Tests
         private readonly string variableValue = "testValue";
 
         [Fact]
-        public void Constructor_TypeInArmValueTypes_SetPropertiesAsExpected()
+        public void Constructor_SetPropertiesAsExpected()
         {
             var actual = new ArmTemplateVariable(variableName, variableValue);
             var expectedReferencePattern = @"variables\([""']{1}testVariable[""']{1}\)";

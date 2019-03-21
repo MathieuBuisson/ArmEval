@@ -1,14 +1,48 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using Xunit;
+using ArmEval.Core;
 
 
 namespace ArmEval.Core.Tests
 {
+    public class InputVariablesTestData : IEnumerable<object[]>
+    {
+        private readonly List<object[]> _data = new List<object[]>
+        {
+            // Object properties represent (respectively) : expression text, output type, input variables
+            new object[] {@"[variables('vmName')]", ArmValueTypes.@string, new List<ArmTemplateVariable>()
+                {
+                    new ArmTemplateVariable("vmName", "testVm")
+                }
+            },
+            new object[] {@"[add(variables('number1'), 9)]", ArmValueTypes.@int, new List<ArmTemplateVariable>()
+                {
+                    new ArmTemplateVariable("number1", 8)
+                }
+            },
+            new object[] {@"[mul(variables('var1'), variables('var2'))]", ArmValueTypes.@int, new List<ArmTemplateVariable>()
+                {
+                    new ArmTemplateVariable("var1", 3),
+                    new ArmTemplateVariable("var2", 7)
+                }
+            },
+            new object[] {@"[variables('obj').Property2]", ArmValueTypes.@object, new List<ArmTemplateVariable>()
+                {
+                    new ArmTemplateVariable("obj", new {Property1 = "customString", Property2 = true})
+                }
+            }
+        };
+
+        public IEnumerator<object[]> GetEnumerator() => _data.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    }
+
     public class ArmTemplateTests
     {
         [Fact]
@@ -89,6 +123,38 @@ namespace ArmEval.Core.Tests
 
             Assert.Equal(outputType.ToString(), actual.Type);
             Assert.Equal(text, actual.Value);
+        }
+
+        [Theory()]
+        [InlineData(@"[variables('vmName')]", "the following variable(s) : vmName")]
+        [InlineData(@"[add(variables('number1'), parameters('number2'))]", "the following variable(s) : number1")]
+        [InlineData(@"[add(variables('var1'), variables('var2'))]", "the following variable(s) : var1, var2")]
+        public void AddExpression_MissingInputVariables_ThrowsArgumentNullException(string text, string expectedMessage)
+        {
+            var template = new ArmTemplate();
+            var expression = new ArmTemplateExpression(text);
+            var inputVariables = new List<ArmTemplateVariable>();
+            
+            Action act = () => { template.AddExpression(expression, ArmValueTypes.@int, inputVariables); };
+            var ex = Record.Exception(act);
+
+            Assert.IsType<ArgumentNullException>(ex);
+            Assert.EndsWith(expectedMessage, ex.Message);
+        }
+
+        [Theory]
+        [ClassData(typeof(InputVariablesTestData))]
+        public void AddExpression_InputVariables_OutputsExpectedTypeAndValue(string text,
+            ArmValueTypes expectedOutputType,
+            List<ArmTemplateVariable> inputVariables)
+        {
+            var template = new ArmTemplate();
+            var expression = new ArmTemplateExpression(text);
+            template.AddExpression(expression, expectedOutputType, inputVariables);
+            var actual = template.Variables;
+
+            Assert.All(inputVariables, v => actual.ContainsKey(v.Name));
+            inputVariables.ForEach(v => Assert.Equal(v.Value, actual[v.Name]));
         }
     }
 }

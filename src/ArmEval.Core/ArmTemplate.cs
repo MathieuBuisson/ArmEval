@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Linq;
 
 namespace ArmEval.Core
 {
@@ -47,6 +48,25 @@ namespace ArmEval.Core
             var output = new KeyValuePair<string, ArmTemplateOutput>(outputName, outputObj);
             Outputs.Add(output);
         }
+
+        public void AddExpression(ArmTemplateExpression expression, ArmValueTypes expectedOutputType,
+            List<ArmTemplateVariable> inputVariables)
+        {
+            AddExpression(expression, expectedOutputType);
+
+            if (expression.VariableNames.Any())
+            {
+                var missingVariables = expression.VariableNames.Except(inputVariables.Select(v => v.Name));
+                if (missingVariables.Any())
+                {
+                    var missingString = String.Join(", ", missingVariables);
+                    throw new ArgumentNullException($"Please specify a value for the following variable(s) : {missingString}");
+                }
+
+                AddInputVariables(inputVariables);
+            }
+        }
+
 
         public void AddInputVariables(List<ArmTemplateVariable> inputVariables)
         {
