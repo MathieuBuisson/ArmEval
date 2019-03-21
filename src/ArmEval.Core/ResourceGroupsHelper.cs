@@ -24,12 +24,7 @@ namespace ArmEval.Core
         {
             if (!Exists(client, resourceGroupName))
             {
-                Console.WriteLine(string.Format("Creating resource group '{0}' in '{1}'", resourceGroupName, location));
                 Create(client, resourceGroupName, location);
-            }
-            else
-            {
-                Console.WriteLine(string.Format("Using existing resource group '{0}'", resourceGroupName));
             }
         }
 
@@ -37,7 +32,6 @@ namespace ArmEval.Core
         {
             if (Exists(client, resourceGroupName))
             {
-                Console.WriteLine(string.Format("Deleting resource group '{0}'", resourceGroupName));
                 client.ResourceGroups.Delete(resourceGroupName);
             }
         }
