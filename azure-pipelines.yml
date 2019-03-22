@@ -7,10 +7,13 @@ variables:
 strategy:
   matrix:
     linux:
+      platform: linux
       imageName: 'ubuntu-16.04'
     mac:
+      platform: mac
       imageName: 'macos-10.13'
     windows:
+      platform: windows
       imageName: 'vs2017-win2016'
 
 pool:
@@ -59,5 +62,5 @@ steps:
   displayName: Publish build artifacts
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)/publish'
-    ArtifactName: publish
+    ArtifactName: publish-$(platform)
     publishLocation: Container
