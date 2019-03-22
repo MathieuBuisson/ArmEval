@@ -1,6 +1,8 @@
 name: "0.1$(Rev:.r)"
 variables:
-  build_Configuration: Release
+- group: AzureConnectionData
+- name: BuildConfiguration
+  value: Release
 
 strategy:
   matrix:
@@ -27,7 +29,7 @@ steps:
   displayName: Compile projects
   inputs:
     command: build
-    configuration: $(build_Configuration)
+    configuration: $(BuildConfiguration)
     projects: '**/*.csproj'
     arguments: '--no-restore'
 
@@ -36,15 +38,20 @@ steps:
   displayName: Run tests
   inputs:
     command: test
-    configuration: $(build_configuration)
+    configuration: $(BuildConfiguration)
     projects: tests/ArmEval.Core.Tests
+  env:
+    ArmEval_TenantId: $(TenantId)
+    ArmEval_ClientId: $(ClientId)
+    ArmEval_ClientSecret: $(ClientSecret)
+    ArmEval_SubscriptionId: $(SubscriptionId)
 
 - task: DotNetCoreCLI@2
   name: dotnetPublish
   displayName: Publish files
   inputs:
     command: publish
-    configuration: $(build_configuration)
+    configuration: $(BuildConfiguration)
     arguments: '--no-restore --output $(Build.ArtifactStagingDirectory)/publish'
 
 - task: PublishBuildArtifacts@1
