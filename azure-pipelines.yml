@@ -42,7 +42,8 @@ steps:
   inputs:
     command: test
     configuration: $(BuildConfiguration)
-    projects: tests/ArmEval.Core.Tests
+    projects: 'tests/**/*.csproj'
+    publishTestResults: true
   env:
     ArmEval_TenantId: $(TenantId)
     ArmEval_ClientId: $(ClientId)
