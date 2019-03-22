@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace ArmEval.Core.UserInputs
 {
-    public class ArmTemplateParameter
+    public class ArmTemplateParameter : IArmTemplateInput
     {
         public string Name { get; }
         public object Value { get; }
