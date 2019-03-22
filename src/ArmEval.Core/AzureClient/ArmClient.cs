@@ -4,7 +4,7 @@ using System.Text;
 using Microsoft.Azure.Management.ResourceManager;
 using Microsoft.Rest.Azure.Authentication;
 
-namespace ArmEval.Core
+namespace ArmEval.Core.AzureClient
 {
     public class ArmClient
     {

@@ -4,7 +4,7 @@ using System.Text;
 using Microsoft.Azure.Management.ResourceManager;
 using Microsoft.Extensions.Configuration;
 
-namespace ArmEval.Core
+namespace ArmEval.Core.AzureClient
 {
     public class ArmClientConfig : IArmClientConfig, IDisposable
     {

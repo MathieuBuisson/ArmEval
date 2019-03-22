@@ -1,11 +1,11 @@
-﻿using Microsoft.Azure.Management.ResourceManager;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using Xunit;
 using Moq;
+using ArmEval.Core.AzureClient;
 
-namespace ArmEval.Core.Tests
+namespace ArmEval.Core.Tests.AzureClient
 {
     public class ArmClientTests : IClassFixture<ArmClientTestConfig>
     {

@@ -1,10 +1,10 @@
-﻿using Microsoft.Azure.Management.ResourceManager;
+﻿using ArmEval.Core.AzureClient;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using Xunit;
 
-namespace ArmEval.Core.Tests
+namespace ArmEval.Core.Tests.AzureClient
 {
     [TestCaseOrderer("ArmEval.Core.Tests.NumericOrderer", "ArmEval.Core.Tests")]
     public class ResourceGroupsHelperTests : IClassFixture<ArmClientConfigRGHelperTests>

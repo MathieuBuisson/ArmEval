@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 using Xunit;
+using ArmEval.Core.UserInputs;
+using ArmEval.Core.AzureClient;
+using ArmEval.Core.ArmTemplate;
 
-namespace ArmEval.Core.Tests
+namespace ArmEval.Core.Tests.UserInputs
 {
     public class ArmTemplateExpressionTests : IClassFixture<ArmClientConfigExpressionTests>
     {
@@ -80,7 +83,7 @@ namespace ArmEval.Core.Tests
             string expectedOutputValue)
         {
             var expression = new ArmTemplateExpression(text);
-            var template = new ArmTemplate();
+            var template = new Template();
             template.AddExpression(expression, expectedOutputType);
             var deployment= new ArmDeployment(config.Client, config.ResourceGroup, template, config.Location);
             var actual = expression.Invoke(deployment);

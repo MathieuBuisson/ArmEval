@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ArmEval.Core
+namespace ArmEval.Core.UserInputs
 {
     public class ExpressionValidationResult
     {

@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 using Xunit;
+using ArmEval.Core.UserInputs;
 
-namespace ArmEval.Core.Tests
+namespace ArmEval.Core.Tests.UserInputs
 {
     public class ArmTemplateVariableTests
     {

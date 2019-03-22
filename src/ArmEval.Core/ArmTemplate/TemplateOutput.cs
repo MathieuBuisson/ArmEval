@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ArmEval.Core
+namespace ArmEval.Core.ArmTemplate
 {
-    public class ArmTemplateOutput
+    public class TemplateOutput
     {
         private string _type;
         public string Type

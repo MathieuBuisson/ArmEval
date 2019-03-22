@@ -1,17 +1,18 @@
-﻿using Microsoft.Azure.Management.ResourceManager;
+﻿using ArmEval.Core.ArmTemplate;
+using ArmEval.Core.AzureClient;
 using Microsoft.Azure.Management.ResourceManager.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using Xunit;
 
-namespace ArmEval.Core.Tests
+namespace ArmEval.Core.Tests.AzureClient
 {
     [TestCaseOrderer("ArmEval.Core.Tests.NumericOrderer", "ArmEval.Core.Tests")]
     public class ArmDeploymentTests : IClassFixture<ArmClientConfigDeploymentTests>
     {
         private readonly ArmClientConfigDeploymentTests config;
-        private readonly ArmTemplate emptyTemplate = new ArmTemplate();
+        private readonly Template emptyTemplate = new Template();
 
         public ArmDeploymentTests(ArmClientConfigDeploymentTests conf)
         {

@@ -6,10 +6,10 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Xunit;
-using ArmEval.Core;
+using ArmEval.Core.UserInputs;
+using ArmEval.Core.ArmTemplate;
 
-
-namespace ArmEval.Core.Tests
+namespace ArmEval.Core.Tests.ArmTemplate
 {
     public class InputVariablesTestData : IEnumerable<object[]>
     {
@@ -50,14 +50,14 @@ namespace ArmEval.Core.Tests
         {
             var expectedSchema = @"https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#";
             var expectedContentVersion = "1.0.0.0";
-            var actual = new ArmTemplate();
+            var actual = new Template();
 
             Assert.Equal(expectedSchema, actual.Schema);
             Assert.Equal(expectedContentVersion, actual.ContentVersion);
             Assert.Equal(new Dictionary<string, object>(), actual.Parameters);
             Assert.Equal(new Dictionary<string, object>(), actual.Variables);
             Assert.Equal(new List<object>(), actual.Resources);
-            Assert.Equal(new Dictionary<string, ArmTemplateOutput>(), actual.Outputs);
+            Assert.Equal(new Dictionary<string, TemplateOutput>(), actual.Outputs);
         }
 
         [Fact]
@@ -65,14 +65,14 @@ namespace ArmEval.Core.Tests
         {
             var testFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TestData/EmptyTemplate.json");
             var templateContent = File.ReadAllText(testFilePath);
-            var actual = JsonConvert.DeserializeObject<ArmTemplate>(templateContent);
+            var actual = JsonConvert.DeserializeObject<Template>(templateContent);
 
-            Assert.IsType<ArmTemplate>(actual);
+            Assert.IsType<Template>(actual);
             Assert.False(string.IsNullOrWhiteSpace(actual.Schema));
             Assert.False(string.IsNullOrWhiteSpace(actual.ContentVersion));
             Assert.IsAssignableFrom<IDictionary<string, object>>(actual.Parameters);
             Assert.IsAssignableFrom<IDictionary<string, object>>(actual.Variables);
-            Assert.IsAssignableFrom<IDictionary<string, ArmTemplateOutput>>(actual.Outputs);
+            Assert.IsAssignableFrom<IDictionary<string, TemplateOutput>>(actual.Outputs);
             Assert.IsType<List<object>>(actual.Resources);
         }
 
@@ -83,9 +83,9 @@ namespace ArmEval.Core.Tests
             var templateContent = File.ReadAllText(testFilePath);
             var expectedSchema = @"https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#";
             var expectedContentVersion = "1.0.0.0";
-            var actual = JsonConvert.DeserializeObject<ArmTemplate>(templateContent);
+            var actual = JsonConvert.DeserializeObject<Template>(templateContent);
 
-            Assert.IsType<ArmTemplate>(actual);
+            Assert.IsType<Template>(actual);
             Assert.Equal(expectedSchema, actual.Schema);
             Assert.Equal(expectedContentVersion, actual.ContentVersion);
 
@@ -99,7 +99,7 @@ namespace ArmEval.Core.Tests
             Assert.True(actual.Variables.ContainsKey("vnetName"));
             Assert.True(actual.Variables.ContainsKey("subnetName"));
 
-            Assert.IsAssignableFrom<IDictionary<string, ArmTemplateOutput>>(actual.Outputs);
+            Assert.IsAssignableFrom<IDictionary<string, TemplateOutput>>(actual.Outputs);
             Assert.Equal(3, actual.Outputs.Keys.Count);
             Assert.True(actual.Outputs.ContainsKey("kubernetesMasterFqdn"));
             Assert.True(actual.Outputs.ContainsKey("aksResourceId"));
@@ -116,7 +116,7 @@ namespace ArmEval.Core.Tests
         [InlineData(@"[not(equals(1, 10))]", ArmValueTypes.@bool)]
         public void AddExpression_NoVariableOrParameter_AddsExpectedOutput(string text, ArmValueTypes outputType)
         {
-            var template = new ArmTemplate();
+            var template = new Template();
             var expression = new ArmTemplateExpression(text);
             template.AddExpression(expression, outputType);
             var actual = template.Outputs["expression"];
@@ -131,7 +131,7 @@ namespace ArmEval.Core.Tests
         [InlineData(@"[add(variables('var1'), variables('var2'))]", "the following variable(s) : var1, var2")]
         public void AddExpression_MissingInputVariables_ThrowsArgumentNullException(string text, string expectedMessage)
         {
-            var template = new ArmTemplate();
+            var template = new Template();
             var expression = new ArmTemplateExpression(text);
             var inputVariables = new List<ArmTemplateVariable>();
             
@@ -148,7 +148,7 @@ namespace ArmEval.Core.Tests
             ArmValueTypes expectedOutputType,
             List<ArmTemplateVariable> inputVariables)
         {
-            var template = new ArmTemplate();
+            var template = new Template();
             var expression = new ArmTemplateExpression(text);
             template.AddExpression(expression, expectedOutputType, inputVariables);
             var actual = template.Variables;

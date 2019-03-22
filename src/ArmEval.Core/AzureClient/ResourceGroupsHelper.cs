@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ArmEval.Core
+namespace ArmEval.Core.AzureClient
 {
     public static class ResourceGroupsHelper
     {

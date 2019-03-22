@@ -1,9 +1,10 @@
-﻿using System;
+﻿using ArmEval.Core.ArmTemplate;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace ArmEval.Core
+namespace ArmEval.Core.UserInputs
 {
     public class ArmTemplateParameter
     {

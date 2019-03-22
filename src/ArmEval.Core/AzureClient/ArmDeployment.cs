@@ -3,21 +3,22 @@ using Microsoft.Azure.Management.ResourceManager.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ArmEval.Core.ArmTemplate;
 
-namespace ArmEval.Core
+namespace ArmEval.Core.AzureClient
 {
     public class ArmDeployment
     {
         public IResourceManagementClient ResourceManagementClient { get; set; }
         public string ResourceGroupName { get; set; }
         public string DeploymentName { get; }
-        public ArmTemplate Template { get; set; }
+        public Template Template { get; set; }
         public Deployment Deployment { get; set; }
         public string Location { get; set; }
 
 
         public ArmDeployment(IResourceManagementClient resourceManagementClient, string resourceGroupName,
-            ArmTemplate template, string location)
+            Template template, string location)
         {
             ResourceManagementClient = resourceManagementClient;
             ResourceGroupName = resourceGroupName;

@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using ArmEval.Core.ArmTemplate;
+using ArmEval.Core.AzureClient;
 using Newtonsoft.Json;
 
-namespace ArmEval.Core
+namespace ArmEval.Core.UserInputs
 {
     public class ArmTemplateExpression
     {
@@ -60,12 +62,12 @@ namespace ArmEval.Core
             return op;
         }
 
-        public ArmTemplateOutput Invoke(ArmDeployment deployment)
+        public TemplateOutput Invoke(ArmDeployment deployment)
         {
             var deploymentResult = deployment.Invoke();
             var outputObject = ((dynamic)deploymentResult.Properties.Outputs).expression;
             
-            var output = JsonConvert.DeserializeObject<ArmTemplateOutput>(outputObject.ToString());
+            var output = JsonConvert.DeserializeObject<TemplateOutput>(outputObject.ToString());
             return output;
         }
 

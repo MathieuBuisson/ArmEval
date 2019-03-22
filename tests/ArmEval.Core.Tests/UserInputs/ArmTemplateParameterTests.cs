@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Text;
 using Xunit;
 using System.Linq;
+using ArmEval.Core.UserInputs;
+using ArmEval.Core.ArmTemplate;
 
-namespace ArmEval.Core.Tests
+namespace ArmEval.Core.Tests.UserInputs
 {
     public class ArmTemplateParameterTests
     {

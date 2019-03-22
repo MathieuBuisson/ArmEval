@@ -1,8 +1,9 @@
-﻿using System;
+﻿using ArmEval.Core.AzureClient;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ArmEval.Core.Tests
+namespace ArmEval.Core.Tests.UserInputs
 {
     public class ArmClientConfigExpressionTests : ArmClientConfig
     {
