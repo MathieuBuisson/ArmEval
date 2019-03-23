@@ -15,34 +15,14 @@ namespace ArmEval.Core.Tests.UserInputs
         }
 
         [Fact]
-        public void AddException_FormatException_IsAddedToExceptionList()
+        public void ExceptionSetter_NotSupportedException_AddsToExceptionProperty()
         {
             var result = new ExpressionValidationResult();
-            result.AddException<FormatException>("Error");
-            var actual = result.ExceptionList[0];
+            result.Exception = new NotSupportedException("TestError");
+            var actual = result.Exception;
 
-            Assert.NotNull(actual);
-            Assert.IsType<FormatException>(actual);
-        }
-        [Fact]
-        public void AddException_NotSupportedException_IsAddedToExceptionList()
-        {
-            var result = new ExpressionValidationResult();
-            result.AddException<NotSupportedException>("Error");
-            var actual = result.ExceptionList[0];
-
-            Assert.NotNull(actual);
             Assert.IsType<NotSupportedException>(actual);
-        }
-        [Fact]
-        public void AddException_FormatException_IsAddedToExceptionListWithExpectMessage()
-        {
-            var result = new ExpressionValidationResult();
-            var expected = "Error Message";
-            result.AddException<FormatException>("Error Message");
-            var actual = result.ExceptionList[0];
-
-            Assert.Equal(expected, actual.Message);
+            Assert.Equal("TestError", actual.Message);
         }
     }
 }

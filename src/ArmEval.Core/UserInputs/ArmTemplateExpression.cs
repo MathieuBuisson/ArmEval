@@ -16,7 +16,7 @@ namespace ArmEval.Core.UserInputs
             get => text;
             set {
                 var result = Validate();
-                text = result.Success ? value : throw result.ExceptionList[0];
+                text = result.Success ? value : throw result.Exception;
             }
         }
 
@@ -49,7 +49,8 @@ namespace ArmEval.Core.UserInputs
             if (!expressionRegexMatch)
             {
                 op.Success = false;
-                op.AddException<FormatException>($"The specified string is not an ARM template expression: {text}");
+                op.Exception = new FormatException($"The specified string is not an ARM template expression: {text}");
+                return op;
             }
 
             // Only self-contained expressions are supported, so they cannot reference resources outside of the expression
@@ -57,7 +58,7 @@ namespace ArmEval.Core.UserInputs
             if (unsupportedPatternsInText.Any())
             {
                 op.Success = false;
-                op.AddException<NotSupportedException>("The expression text contains unsupported ARM template function(s)");
+                op.Exception = new NotSupportedException("The expression contains unsupported ARM template function(s)");
             }
             return op;
         }
@@ -79,11 +80,12 @@ namespace ArmEval.Core.UserInputs
             var matches = regex.Matches(text);
             if (matches.Count > 0)
             {
-                matches.OfType<Match>().ToList()
-                    .ForEach(m => variableNames.Add(m.Groups["Variables"].Value));
+                foreach (var match in matches.OfType<Match>())
+                {
+                    variableNames.Add(match.Groups["Variables"].Value);
+                }
             }
             return variableNames;
-
         }
         private IEnumerable<string> parseParameters(string text)
         {
@@ -93,8 +95,10 @@ namespace ArmEval.Core.UserInputs
             var matches = regex.Matches(text);
             if (matches.Count > 0)
             {
-                matches.OfType<Match>().ToList()
-                    .ForEach(m => paramNames.Add(m.Groups["Parameters"].Value));
+                foreach (var match in matches.OfType<Match>())
+                {
+                    paramNames.Add(match.Groups["Parameters"].Value);
+                }
             }
             return paramNames;
         }

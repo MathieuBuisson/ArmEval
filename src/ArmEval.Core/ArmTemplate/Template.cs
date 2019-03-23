@@ -5,6 +5,7 @@ using System.IO;
 using System.Text;
 using System.Linq;
 using ArmEval.Core.UserInputs;
+using System.Collections.ObjectModel;
 
 namespace ArmEval.Core.ArmTemplate
 {
@@ -23,7 +24,7 @@ namespace ArmEval.Core.ArmTemplate
         public IDictionary<string, object> Variables { get; set; }
 
         [JsonProperty("resources")]
-        public List<object> Resources { get; set; }
+        public IEnumerable<object> Resources { get; set; }
 
         [JsonProperty("outputs")]
         public IDictionary<string, TemplateOutput> Outputs { get; set; }
@@ -34,7 +35,7 @@ namespace ArmEval.Core.ArmTemplate
             ContentVersion = "1.0.0.0";
             Parameters = new Dictionary<string, object>();
             Variables = new Dictionary<string, object>();
-            Resources = new List<object>();
+            Resources = new Collection<object>();
             Outputs = new Dictionary<string, TemplateOutput>();
         }
 
@@ -51,7 +52,7 @@ namespace ArmEval.Core.ArmTemplate
         }
 
         public void AddExpression(ArmTemplateExpression expression, ArmValueTypes expectedOutputType,
-            List<ArmTemplateVariable> inputVariables)
+            ICollection<ArmTemplateVariable> inputVariables)
         {
             AddExpression(expression, expectedOutputType);
 
@@ -69,14 +70,20 @@ namespace ArmEval.Core.ArmTemplate
         }
 
 
-        public void AddInputVariables(List<ArmTemplateVariable> inputVariables)
+        public void AddInputVariables(ICollection<ArmTemplateVariable> inputVariables)
         {
-            inputVariables.ForEach(v => Variables.Add(v.Name, v.Value));
+            foreach (var inputVar in inputVariables)
+            {
+                Variables.Add(inputVar.Name, inputVar.Value);
+            }
         }
 
-        public void AddInputParameters(List<ArmTemplateParameter> inputParameters)
+        public void AddInputParameters(ICollection<ArmTemplateParameter> inputParameters)
         {
-            inputParameters.ForEach(p => Parameters.Add(p.Name, p.Value));
+            foreach (var inputParam in inputParameters)
+            {
+                Parameters.Add(inputParam.Name, inputParam.Value);
+            }
         }
     }
 }

@@ -6,12 +6,12 @@ variables:
 
 strategy:
   matrix:
-    linux:
-      platform: linux
-      imageName: 'ubuntu-16.04'
-    mac:
-      platform: mac
-      imageName: 'macos-10.13'
+    # linux:
+    #   platform: linux
+    #   imageName: 'ubuntu-16.04'
+    # mac:
+    #   platform: mac
+    #   imageName: 'macos-10.13'
     windows:
       platform: windows
       imageName: 'vs2017-win2016'
@@ -36,14 +36,23 @@ steps:
     projects: '**/*.csproj'
     arguments: '--no-restore'
 
-- task: DotNetCoreCLI@2
+# - task: DotNetCoreCLI@2
+#   name: dotnetTest
+#   displayName: Run tests
+#   inputs:
+#     command: test
+#     configuration: $(BuildConfiguration)
+#     projects: 'tests/**/*.csproj'
+#     publishTestResults: true
+#   env:
+#     ArmEval_TenantId: $(TenantId)
+#     ArmEval_ClientId: $(ClientId)
+#     ArmEval_ClientSecret: $(ClientSecret)
+#     ArmEval_SubscriptionId: $(SubscriptionId)
+
+- script: dotnet test ./tests/ArmEval.Core.Tests/ -c $(BuildConfiguration) --no-build -l trx -v normal
   name: dotnetTest
-  displayName: Run tests
-  inputs:
-    command: test
-    configuration: $(BuildConfiguration)
-    projects: 'tests/**/*.csproj'
-    publishTestResults: true
+  displayName: Run Tests
   env:
     ArmEval_TenantId: $(TenantId)
     ArmEval_ClientId: $(ClientId)

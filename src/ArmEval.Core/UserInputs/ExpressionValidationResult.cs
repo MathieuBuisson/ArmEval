@@ -1,24 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
 namespace ArmEval.Core.UserInputs
 {
     public class ExpressionValidationResult
     {
         public bool Success { get; set; }
-        public List<Exception> ExceptionList { get; private set; }
+        public Exception Exception { get; set; }
 
         public ExpressionValidationResult()
         {
-            ExceptionList = new List<Exception>();
             Success = true;
-        }
-
-        public void AddException<E>(string message) where E : Exception
-        {
-            var exception = Activator.CreateInstance(typeof(E), message) as E;
-            ExceptionList.Add(exception);
         }
     }
 }

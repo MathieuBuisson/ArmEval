@@ -8,6 +8,7 @@ using System.Text;
 using Xunit;
 using ArmEval.Core.UserInputs;
 using ArmEval.Core.ArmTemplate;
+using System.Collections.ObjectModel;
 
 namespace ArmEval.Core.Tests.ArmTemplate
 {
@@ -56,7 +57,7 @@ namespace ArmEval.Core.Tests.ArmTemplate
             Assert.Equal(expectedContentVersion, actual.ContentVersion);
             Assert.Equal(new Dictionary<string, object>(), actual.Parameters);
             Assert.Equal(new Dictionary<string, object>(), actual.Variables);
-            Assert.Equal(new List<object>(), actual.Resources);
+            Assert.Equal(new Collection<object>(), actual.Resources);
             Assert.Equal(new Dictionary<string, TemplateOutput>(), actual.Outputs);
         }
 
@@ -73,7 +74,7 @@ namespace ArmEval.Core.Tests.ArmTemplate
             Assert.IsAssignableFrom<IDictionary<string, object>>(actual.Parameters);
             Assert.IsAssignableFrom<IDictionary<string, object>>(actual.Variables);
             Assert.IsAssignableFrom<IDictionary<string, TemplateOutput>>(actual.Outputs);
-            Assert.IsType<List<object>>(actual.Resources);
+            Assert.IsAssignableFrom<IEnumerable<object>>(actual.Resources);
         }
 
         [Fact]
@@ -104,8 +105,8 @@ namespace ArmEval.Core.Tests.ArmTemplate
             Assert.True(actual.Outputs.ContainsKey("kubernetesMasterFqdn"));
             Assert.True(actual.Outputs.ContainsKey("aksResourceId"));
 
-            Assert.IsType<List<object>>(actual.Resources);
-            Assert.Equal(4, actual.Resources.Count);
+            Assert.IsAssignableFrom<IEnumerable<object>>(actual.Resources);
+            Assert.Equal(4, actual.Resources.Count());
             Assert.True(actual.Resources.All(r => r is Newtonsoft.Json.Linq.JObject));
 
         }
