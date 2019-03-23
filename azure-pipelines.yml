@@ -28,14 +28,16 @@ steps:
     projects: '**/*.csproj'
 
 - script: |
-    echo "SubscriptionId = $env:ArmEval_SubscriptionId"
-    echo "TenantId = $env:ArmEval_TenantId"
-    echo "ClientId = $env:ArmEval_ClientId"
+    echo SubscriptionId = %ArmEval_SubscriptionId%
+    echo TenantId = %ArmEval_TenantId%
+    echo ClientId = %ArmEval_ClientId%
+    echo SecretTenantId = %Secret_TenantId%
   env:
     ArmEval_TenantId: $(TenantId)
     ArmEval_ClientId: $(ClientId)
     ArmEval_ClientSecret: $(ClientSecret)
     ArmEval_SubscriptionId: $(SubscriptionId)
+    Secret_TenantId: $(SECRET_TENANTID)
 
 - script: |
     dotnet build -nodereuse:false -c $(BuildConfiguration) --no-restore
