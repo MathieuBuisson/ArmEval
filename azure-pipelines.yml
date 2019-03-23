@@ -27,37 +27,23 @@ steps:
     command: restore
     projects: '**/*.csproj'
 
-# - task: DotNetCoreCLI@2
-#   name: dotnetBuild
-#   displayName: Compile projects
-#   inputs:
-#     command: build
-#     configuration: $(BuildConfiguration)
-#     projects: '**/*.csproj'
-#     arguments: '--no-restore'
-
-# - task: DotNetCoreCLI@2
-#   name: dotnetTest
-#   displayName: Run tests
-#   inputs:
-#     command: test
-#     configuration: $(BuildConfiguration)
-#     projects: 'tests/**/*.csproj'
-#     publishTestResults: true
-#   env:
-#     ArmEval_TenantId: $(TenantId)
-#     ArmEval_ClientId: $(ClientId)
-#     ArmEval_ClientSecret: $(ClientSecret)
-#     ArmEval_SubscriptionId: $(SubscriptionId)
+- script: |
+    echo "SubscriptionId = $env:ArmEval_SubscriptionId"
+    echo "TenantId = $env:ArmEval_TenantId"
+    echo "ClientId = $env:ArmEval_ClientId"
+  env:
+    ArmEval_TenantId: $(TenantId)
+    ArmEval_ClientId: $(ClientId)
+    ArmEval_ClientSecret: $(ClientSecret)
+    ArmEval_SubscriptionId: $(SubscriptionId)
 
 - script: |
     dotnet build -nodereuse:false -c $(BuildConfiguration) --no-restore
-    echo "SubscriptionId = $env:ArmEval_SubscriptionId"
-    echo "TenantId = $env:ArmEval_TenantId"
     cd ./tests/ArmEval.Core.Tests/
     dotnet test -c $(BuildConfiguration) -l trx -v normal
   name: dotnetTest
   displayName: Run Tests
+  timeoutInMinutes: 90
   env:
     ArmEval_TenantId: $(TenantId)
     ArmEval_ClientId: $(ClientId)
