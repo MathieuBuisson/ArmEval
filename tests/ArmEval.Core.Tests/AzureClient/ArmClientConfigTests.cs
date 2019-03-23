@@ -17,7 +17,7 @@ namespace ArmEval.Core.Tests.AzureClient
             Assert.NotNull(actual.ClientId);
             Assert.NotNull(actual.ClientSecret);
             Assert.NotNull(actual.Subscription);
-            Assert.Matches(@"^ArmEval\d+$", actual.ResourceGroup);
+            Assert.Matches(@"^ArmEval\w{5}$", actual.ResourceGroup);
             Assert.Equal("North Europe", actual.Location);
             Assert.IsAssignableFrom<IResourceManagementClient>(actual.Client);
         }

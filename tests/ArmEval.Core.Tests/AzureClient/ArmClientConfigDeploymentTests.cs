@@ -1,4 +1,5 @@
 ﻿using ArmEval.Core.AzureClient;
+using ArmEval.Core.Utils;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,7 +10,8 @@ namespace ArmEval.Core.Tests.AzureClient
     {
         public ArmClientConfigDeploymentTests() : base()
         {
-            ResourceGroup = $"ArmEvalDeploy-{DateTime.Now.Ticks.ToString().Substring(13)}";
+            var suffix = UniqueString.Create(5);
+            ResourceGroup = $"ArmEvalDeploy-{suffix}";
         }
     }
 }

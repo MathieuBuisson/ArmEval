@@ -28,7 +28,7 @@ namespace ArmEval.Core.Tests.AzureClient
             Assert.Same(config.ResourceGroup, actual.ResourceGroupName);
             Assert.Same(emptyTemplate, actual.Template);
             Assert.Same(config.Location, actual.Location);
-            Assert.Matches(@"^armeval-deployment-\d+$", actual.DeploymentName);
+            Assert.Matches(@"^armeval-deployment-\w{5}$", actual.DeploymentName);
             Assert.IsType<Deployment>(actual.Deployment);
         }
 

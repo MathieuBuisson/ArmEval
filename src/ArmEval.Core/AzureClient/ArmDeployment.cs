@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ArmEval.Core.ArmTemplate;
+using ArmEval.Core.Utils;
 
 namespace ArmEval.Core.AzureClient
 {
@@ -25,8 +26,8 @@ namespace ArmEval.Core.AzureClient
             Template = template;
             Location = location;
 
-            var timeStamp = DateTime.Now.Ticks.ToString().Substring(13);
-            DeploymentName = $"armeval-deployment-{timeStamp}";
+            var suffix = UniqueString.Create(5);
+            DeploymentName = $"armeval-deployment-{suffix}";
 
             Deployment = new Deployment();
             Deployment.Properties = new DeploymentProperties

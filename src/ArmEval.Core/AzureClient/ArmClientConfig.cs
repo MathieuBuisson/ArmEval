@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using ArmEval.Core.Utils;
 using Microsoft.Azure.Management.ResourceManager;
 using Microsoft.Extensions.Configuration;
 
@@ -25,7 +26,7 @@ namespace ArmEval.Core.AzureClient
             ClientId = config["ClientId"];
             ClientSecret = config["ClientSecret"];
             Subscription = config["SubscriptionId"];
-            ResourceGroup = $"ArmEval{DateTime.Now.Ticks.ToString().Substring(13)}";
+            ResourceGroup = $"ArmEval{UniqueString.Create(5)}";
 
             Client = new ArmClient(TenantId, ClientId, ClientSecret, Subscription)
                 .Create();
