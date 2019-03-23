@@ -50,7 +50,7 @@ steps:
 #     ArmEval_ClientSecret: $(ClientSecret)
 #     ArmEval_SubscriptionId: $(SubscriptionId)
 
-- script: dotnet test ./tests/ArmEval.Core.Tests/ -c $(BuildConfiguration) --no-build -l trx -v normal
+- script: dotnet test ./tests/ArmEval.Core.Tests/ -c $(BuildConfiguration) -l trx -v normal
   name: dotnetTest
   displayName: Run Tests
   env:
