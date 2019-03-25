@@ -5,7 +5,7 @@ using System.Text;
 
 namespace ArmEval.Core.Tests.AzureClient
 {
-    public class ArmClientTestConfig : IArmClientConfig
+    public class ClientTestConfig : IClientConfig
     {
         public string TenantId { get => "testTenantId"; }
         public string ClientId { get => "testClientId"; }

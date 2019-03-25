@@ -6,7 +6,7 @@ using System.Text;
 
 namespace ArmEval.Core.Tests.UserInputs
 {
-    public class ArmClientConfigExpressionTests : ArmClientConfig
+    public class ArmClientConfigExpressionTests : ClientConfig
     {
         public ArmClientConfigExpressionTests() : base()
         {

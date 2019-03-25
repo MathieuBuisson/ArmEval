@@ -7,11 +7,11 @@ using Xunit;
 namespace ArmEval.Core.Tests.AzureClient
 {
     [TestCaseOrderer("ArmEval.Core.Tests.NumericOrderer", "ArmEval.Core.Tests")]
-    public class ResourceGroupsHelperTests : IClassFixture<ArmClientConfigRGHelperTests>
+    public class ResourceGroupsHelperTests : IClassFixture<ClientConfigRGHelperTests>
     {
-        private readonly ArmClientConfigRGHelperTests config;
+        private readonly ClientConfigRGHelperTests config;
 
-        public ResourceGroupsHelperTests(ArmClientConfigRGHelperTests conf)
+        public ResourceGroupsHelperTests(ClientConfigRGHelperTests conf)
         {
             config = conf;
         }

@@ -6,12 +6,12 @@ using System.Text;
 
 namespace ArmEval.Core.Tests.AzureClient
 {
-    public class ArmClientConfigRGHelperTests : ArmClientConfig
+    public class ClientConfigDeploymentTests : ClientConfig
     {
-        public ArmClientConfigRGHelperTests() : base()
+        public ClientConfigDeploymentTests() : base()
         {
             var suffix = UniqueString.Create(5);
-            ResourceGroup = $"ArmEvalRGHelper-{suffix}";
+            ResourceGroup = $"ArmEvalDeploy-{suffix}";
         }
     }
 }

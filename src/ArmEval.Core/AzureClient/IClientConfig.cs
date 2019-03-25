@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ArmEval.Core.AzureClient
 {
-    public interface IArmClientConfig
+    public interface IClientConfig
     {
         string TenantId { get; }
         string ClientId { get; }

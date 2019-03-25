@@ -7,12 +7,12 @@ using ArmEval.Core.AzureClient;
 
 namespace ArmEval.Core.Tests.AzureClient
 {
-    public class ArmClientTests : IClassFixture<ArmClientTestConfig>
+    public class ClientTests : IClassFixture<ClientTestConfig>
     {
 
-        private readonly ArmClientTestConfig config;
+        private readonly ClientTestConfig config;
 
-        public ArmClientTests(ArmClientTestConfig conf)
+        public ClientTests(ClientTestConfig conf)
         {
             config = conf;
         }
@@ -20,7 +20,7 @@ namespace ArmEval.Core.Tests.AzureClient
         [Fact]
         public void Constructor_WithIArmClientConfig_SetsConfigValuesFromConfig()
         {
-            var actual = new ArmClient(config);
+            var actual = new Client(config);
 
             Assert.NotNull(actual.TenantId);
             Assert.NotNull(actual.ClientId);
@@ -31,7 +31,7 @@ namespace ArmEval.Core.Tests.AzureClient
         [Fact]
         public void Constructor_WithIArmClientConfig_SetsPropertiesFromConfig()
         {
-            var actual = new ArmClient(config);
+            var actual = new Client(config);
 
             Assert.Equal(config.TenantId, actual.TenantId);
             Assert.Equal(config.ClientId, actual.ClientId);
@@ -42,7 +42,7 @@ namespace ArmEval.Core.Tests.AzureClient
         [Fact]
         public void Constructor_WithArguments_SetsPropertiesFromArgs()
         {
-            var actual = new ArmClient(config.TenantId, config.ClientId, config.ClientSecret, config.Subscription);
+            var actual = new Client(config.TenantId, config.ClientId, config.ClientSecret, config.Subscription);
 
             Assert.Equal(config.TenantId, actual.TenantId);
             Assert.Equal(config.ClientId, actual.ClientId);
@@ -53,8 +53,8 @@ namespace ArmEval.Core.Tests.AzureClient
         [Fact]
         public void Create_AuthenticatesSuccessfullyWithArm()
         {
-            var config = new ArmClientConfig();
-            var armClient = new ArmClient(config);
+            var config = new ClientConfig();
+            var armClient = new Client(config);
             using (var resourceManagementClient = armClient.Create())
             {
                 Assert.NotNull(resourceManagementClient.Credentials);

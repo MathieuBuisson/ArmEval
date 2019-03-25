@@ -9,12 +9,12 @@ using Xunit;
 namespace ArmEval.Core.Tests.AzureClient
 {
     [TestCaseOrderer("ArmEval.Core.Tests.NumericOrderer", "ArmEval.Core.Tests")]
-    public class ArmDeploymentTests : IClassFixture<ArmClientConfigDeploymentTests>
+    public class ArmDeploymentTests : IClassFixture<ClientConfigDeploymentTests>
     {
-        private readonly ArmClientConfigDeploymentTests config;
+        private readonly ClientConfigDeploymentTests config;
         private readonly Template emptyTemplate = new Template();
 
-        public ArmDeploymentTests(ArmClientConfigDeploymentTests conf)
+        public ArmDeploymentTests(ClientConfigDeploymentTests conf)
         {
             config = conf;
         }
