@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using ArmEval.Core.ArmTemplate;
-using ArmEval.Core.AzureClient;
+using ArmEval.Core.ArmClient;
 using Newtonsoft.Json;
 
 namespace ArmEval.Core.UserInputs

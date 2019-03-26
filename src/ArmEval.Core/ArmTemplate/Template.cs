@@ -69,7 +69,6 @@ namespace ArmEval.Core.ArmTemplate
             }
         }
 
-
         public void AddInputVariables(ICollection<ArmTemplateVariable> inputVariables)
         {
             foreach (var inputVar in inputVariables)

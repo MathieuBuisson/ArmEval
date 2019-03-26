@@ -3,27 +3,25 @@ using Microsoft.Azure.Management.ResourceManager.Models;
 using System;
 using System.Collections.Generic;
 using ArmEval.Core.ArmTemplate;
+using ArmEval.Core.Extensions;
 using ArmEval.Core.Utils;
 
-namespace ArmEval.Core.AzureClient
+namespace ArmEval.Core.ArmClient
 {
     public class ArmDeployment
     {
-        public IResourceManagementClient ResourceManagementClient { get; set; }
-        public string ResourceGroupName { get; set; }
+        public IResourceManagementClient Client { get; set; }
+        public ResourceGroup ResourceGroup { get; set; }
         public string DeploymentName { get; }
         public ITemplate Template { get; set; }
         public Deployment Deployment { get; set; }
-        public string Location { get; set; }
 
-
-        public ArmDeployment(IResourceManagementClient resourceManagementClient, string resourceGroupName,
-            ITemplate template, string location)
+        public ArmDeployment(IResourceManagementClient resourceManagementClient,
+            ResourceGroup resourceGroup, ITemplate template)
         {
-            ResourceManagementClient = resourceManagementClient;
-            ResourceGroupName = resourceGroupName;
+            Client = resourceManagementClient;
+            ResourceGroup = resourceGroup;
             Template = template;
-            Location = location;
 
             var suffix = UniqueString.Create(5);
             DeploymentName = $"armeval-deployment-{suffix}";
@@ -35,16 +33,15 @@ namespace ArmEval.Core.AzureClient
                 Template = Template,
                 Parameters = Template.Parameters
             };
-
         }
 
         public DeploymentExtended Invoke()
         {
-            ResourceGroupsHelper.CreateIfNotExists(ResourceManagementClient, ResourceGroupName, Location);
+            ResourceGroup.CreateIfNotExists(Client, ResourceGroup.Location);
 
-            var result = ResourceManagementClient
+            var result = Client
                 .Deployments
-                .CreateOrUpdate(ResourceGroupName, DeploymentName, Deployment);
+                .CreateOrUpdate(ResourceGroup.Name, DeploymentName, Deployment);
             return result;
         }
     }

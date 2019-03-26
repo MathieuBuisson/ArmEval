@@ -1,5 +1,6 @@
 ﻿using ArmEval.Core.ArmTemplate;
 using Microsoft.Azure.Management.ResourceManager;
+using Microsoft.Azure.Management.ResourceManager.Models;
 
 namespace ArmEval.Cli
 {
@@ -7,7 +8,7 @@ namespace ArmEval.Cli
     {
         string AzureRegion { get; }
         IResourceManagementClient Client { get; }
-        string ResourceGroup { get; }
+        ResourceGroup ResourceGroup { get; set; }
         ITemplate Template { get; set; }
 
         void Init();

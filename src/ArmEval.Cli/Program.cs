@@ -1,8 +1,8 @@
 ﻿using System;
 using ArmEval.Core.ArmTemplate;
-using ArmEval.Core.AzureClient;
+using ArmEval.Core.ArmClient;
 using ArmEval.Core.UserInputs;
-using ArmEval.Core.Utils;
+using ArmEval.Core.Extensions;
 using Autofac;
 
 namespace ArmEval.Cli
@@ -21,12 +21,12 @@ namespace ArmEval.Cli
                 var expression = new ArmTemplateExpression(@"[concat('strg12', 'strg56')]");
                 
                 app.Template.AddExpression(expression, ArmValueTypes.@string);
-                var deployment = new ArmDeployment(app.Client, app.ResourceGroup, app.Template, app.AzureRegion);
+                var deployment = new ArmDeployment(app.Client, app.ResourceGroup, app.Template);
                 var result = expression.Invoke(deployment);
 
                 Console.WriteLine(result.Type);
                 Console.WriteLine(result.Value);
-                ResourceGroupsHelper.DeleteIfExists(app.Client, app.ResourceGroup);
+                app.ResourceGroup.DeleteIfExists(app.Client);
             }
             Console.ReadKey();
         }
