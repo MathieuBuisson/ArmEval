@@ -9,7 +9,7 @@ using System.Collections.ObjectModel;
 
 namespace ArmEval.Core.ArmTemplate
 {
-    public class Template
+    public class Template : ITemplate
     {
         [JsonProperty("$schema")]
         public string Schema { get; set; }

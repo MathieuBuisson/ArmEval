@@ -1,12 +1,10 @@
-﻿using ArmEval.Core.AzureClient;
+﻿using ArmEval.Core.ArmTemplate;
 using Autofac;
 using Microsoft.Azure.Management.ResourceManager;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Rest;
 using Microsoft.Rest.Azure.Authentication;
 using System;
-using System.Linq;
-using System.Reflection;
 
 namespace ArmEval.Cli
 {
@@ -23,8 +21,8 @@ namespace ArmEval.Cli
             builder.RegisterInstance(config).As<IConfigurationRoot>();
             builder.RegisterInstance(creds).As<ServiceClientCredentials>();
             builder.RegisterType<ResourceManagementClient>().As<IResourceManagementClient>();
-            builder.RegisterType<Client>().As<IClient>();
-            //builder.RegisterType<Application>().As<IApplication>();
+            builder.RegisterType<Template>().As<ITemplate>();
+            builder.RegisterType<Application>().As<IApplication>();
 
             return builder.Build();
         }

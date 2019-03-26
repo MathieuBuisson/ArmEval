@@ -4,8 +4,6 @@ using ArmEval.Core.AzureClient;
 using ArmEval.Core.UserInputs;
 using ArmEval.Core.Utils;
 using Autofac;
-using Microsoft.Azure.Management.ResourceManager;
-using Microsoft.Extensions.Configuration;
 
 namespace ArmEval.Cli
 {
@@ -17,21 +15,20 @@ namespace ArmEval.Cli
 
             using (var scope = container.BeginLifetimeScope())
             {
-                var config = scope.Resolve<IConfigurationRoot>();
-                var client = scope.Resolve<IResourceManagementClient>();
-                client.SubscriptionId = config["SubscriptionId"];
+                var app = scope.Resolve<IApplication>();
+                app.Init();
 
-                var expression = new ArmTemplateExpression(@"[concat('string12', 'string56')]");
-                var template = new Template();
-                template.AddExpression(expression, ArmValueTypes.@string);
-                var deployment = new ArmDeployment(client, $"ArmEval{UniqueString.Create(5)}", template, "North Europe");
+                var expression = new ArmTemplateExpression(@"[concat('strg12', 'strg56')]");
+                
+                app.Template.AddExpression(expression, ArmValueTypes.@string);
+                var deployment = new ArmDeployment(app.Client, app.ResourceGroup, app.Template, app.AzureRegion);
                 var result = expression.Invoke(deployment);
 
                 Console.WriteLine(result.Type);
                 Console.WriteLine(result.Value);
-
-                Console.ReadKey();
+                ResourceGroupsHelper.DeleteIfExists(app.Client, app.ResourceGroup);
             }
+            Console.ReadKey();
         }
     }
 }
