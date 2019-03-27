@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using ArmEval.Core.ArmTemplate;
 using ArmEval.Core.ArmClient;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace ArmEval.Core.UserInputs
 {
@@ -63,12 +64,13 @@ namespace ArmEval.Core.UserInputs
             return op;
         }
 
-        public TemplateOutput Invoke(ArmDeployment deployment)
+        public TemplateOutput Invoke(IArmDeployment deployment)
         {
-            var deploymentResult = deployment.Invoke();
-            var outputObject = ((dynamic)deploymentResult.Properties.Outputs).expression;
-            
-            var output = JsonConvert.DeserializeObject<TemplateOutput>(outputObject.ToString());
+            string deploymentOutputs = deployment.Invoke();
+            var expressionOutput = JToken.Parse(deploymentOutputs)["expression"];
+            var expressionOutputStr = expressionOutput.ToString();
+
+            var output = JsonConvert.DeserializeObject<TemplateOutput>(expressionOutputStr);
             return output;
         }
 

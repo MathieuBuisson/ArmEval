@@ -8,7 +8,7 @@ using ArmEval.Core.Utils;
 
 namespace ArmEval.Core.ArmClient
 {
-    public class ArmDeployment
+    public class ArmDeployment : IArmDeployment
     {
         public IResourceManagementClient Client { get; set; }
         public ResourceGroup ResourceGroup { get; set; }
@@ -35,14 +35,16 @@ namespace ArmEval.Core.ArmClient
             };
         }
 
-        public DeploymentExtended Invoke()
+        public string Invoke()
         {
             ResourceGroup.CreateIfNotExists(Client, ResourceGroup.Location);
 
             var result = Client
                 .Deployments
                 .CreateOrUpdate(ResourceGroup.Name, DeploymentName, Deployment);
-            return result;
+
+            var outputsString = result.Properties.Outputs.ToString();
+            return outputsString;
         }
     }
 }
