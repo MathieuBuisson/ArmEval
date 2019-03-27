@@ -6,6 +6,7 @@ using System.Text;
 using System.Linq;
 using ArmEval.Core.UserInputs;
 using System.Collections.ObjectModel;
+using ArmEval.Core.Extensions;
 
 namespace ArmEval.Core.ArmTemplate
 {
@@ -42,7 +43,7 @@ namespace ArmEval.Core.ArmTemplate
         public void AddExpression(ArmTemplateExpression expression, ArmValueTypes expectedOutputType)
         {
             var outputName = "expression";
-            var outputTypeName = expectedOutputType.ToString();
+            var outputTypeName = expectedOutputType.ToString().FirstCharToUpper();
             var outputObj = new TemplateOutput();
             outputObj.Type = outputTypeName;
             outputObj.Value = expression.Text;
