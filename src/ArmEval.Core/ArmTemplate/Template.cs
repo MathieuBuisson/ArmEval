@@ -28,7 +28,7 @@ namespace ArmEval.Core.ArmTemplate
         public IEnumerable<object> Resources { get; set; }
 
         [JsonProperty("outputs")]
-        public IDictionary<string, TemplateOutput> Outputs { get; set; }
+        public IDictionary<string, object> Outputs { get; set; }
 
         public Template()
         {
@@ -37,18 +37,16 @@ namespace ArmEval.Core.ArmTemplate
             Parameters = new Dictionary<string, object>();
             Variables = new Dictionary<string, object>();
             Resources = new Collection<object>();
-            Outputs = new Dictionary<string, TemplateOutput>();
+            Outputs = new Dictionary<string, object>();
         }
 
         public void AddExpression(ArmTemplateExpression expression, ArmValueTypes expectedOutputType)
         {
             var outputName = "expression";
             var outputTypeName = expectedOutputType.ToString().FirstCharToUpper();
-            var outputObj = new TemplateOutput();
-            outputObj.Type = outputTypeName;
-            outputObj.Value = expression.Text;
-            
-            var output = new KeyValuePair<string, TemplateOutput>(outputName, outputObj);
+
+            var outputObj = new { Type = outputTypeName, Value = expression.Text };            
+            var output = new KeyValuePair<string, object>(outputName, outputObj);
             Outputs.Add(output);
         }
 
@@ -62,7 +60,7 @@ namespace ArmEval.Core.ArmTemplate
                 var missingVariables = expression.VariableNames.Except(inputVariables.Select(v => v.Name));
                 if (missingVariables.Any())
                 {
-                    var missingString = String.Join(", ", missingVariables);
+                    var missingString = string.Join(", ", missingVariables);
                     throw new ArgumentNullException($"Please specify a value for the following variable(s) : {missingString}");
                 }
 

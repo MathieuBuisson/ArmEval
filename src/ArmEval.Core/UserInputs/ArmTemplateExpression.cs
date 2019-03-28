@@ -64,13 +64,13 @@ namespace ArmEval.Core.UserInputs
             return op;
         }
 
-        public TemplateOutput Invoke(IArmDeployment deployment)
+        public object Invoke(IArmDeployment deployment)
         {
             string deploymentOutputs = deployment.Invoke();
             var expressionOutput = JToken.Parse(deploymentOutputs)["expression"];
             var expressionOutputStr = expressionOutput.ToString();
 
-            var output = JsonConvert.DeserializeObject<TemplateOutput>(expressionOutputStr);
+            var output = JsonConvert.DeserializeObject(expressionOutputStr);
             return output;
         }
 

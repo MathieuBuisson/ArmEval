@@ -6,7 +6,7 @@ namespace ArmEval.Core.ArmTemplate
     public interface ITemplate
     {
         string ContentVersion { get; set; }
-        IDictionary<string, TemplateOutput> Outputs { get; set; }
+        IDictionary<string, object> Outputs { get; set; }
         IDictionary<string, object> Parameters { get; set; }
         IEnumerable<object> Resources { get; set; }
         string Schema { get; set; }

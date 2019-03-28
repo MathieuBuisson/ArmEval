@@ -12,7 +12,7 @@ namespace ArmEval.Core.UserInputs
         public object Value { get; }
         public Regex ReferencePattern { get; }
 
-        private readonly string validTypes = String.Join(", ", Enum.GetNames(typeof(ArmValueTypes)));
+        private readonly string validTypes = string.Join(", ", Enum.GetNames(typeof(ArmValueTypes)));
         private string _type;
         public string Type
         {

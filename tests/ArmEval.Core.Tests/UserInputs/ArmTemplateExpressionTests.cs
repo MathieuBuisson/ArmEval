@@ -87,6 +87,11 @@ namespace ArmEval.Core.Tests.UserInputs
         [InlineData(@"[mul(6, 3)]", ArmValueTypes.@int, "18")]
         [InlineData(@"[contains(createArray('one', 'two'), 'two')]", ArmValueTypes.@bool, "true")]
         [InlineData(@"[not(equals(1, 10))]", ArmValueTypes.@bool, "true")]
+        [InlineData(@"[createArray(1, 2, 3)]", ArmValueTypes.array, @"[
+      1,
+      2,
+      3
+    ]")]
         public void Invoke_NoVariableOrParameter_ReturnsExpectedOutput(
             string text,
             ArmValueTypes expectedOutputType,
@@ -100,10 +105,8 @@ namespace ArmEval.Core.Tests.UserInputs
 
             var actual = expression.Invoke(deployment);
 
-            Assert.Equal(expectedOutputType.ToString(), actual.Type);
-            Assert.Equal(expectedOutputValue, actual.Value);
+            Assert.Equal(expectedOutputType.ToString(), actual);
+            Assert.Equal(expectedOutputValue, actual);
         }
-
-
     }
 }

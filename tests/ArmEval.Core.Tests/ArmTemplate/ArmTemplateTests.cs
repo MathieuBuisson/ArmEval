@@ -58,7 +58,7 @@ namespace ArmEval.Core.Tests.ArmTemplate
             Assert.Equal(new Dictionary<string, object>(), actual.Parameters);
             Assert.Equal(new Dictionary<string, object>(), actual.Variables);
             Assert.Equal(new Collection<object>(), actual.Resources);
-            Assert.Equal(new Dictionary<string, TemplateOutput>(), actual.Outputs);
+            Assert.Equal(new Dictionary<string, object>(), actual.Outputs);
         }
 
         [Fact]
@@ -73,7 +73,7 @@ namespace ArmEval.Core.Tests.ArmTemplate
             Assert.False(string.IsNullOrWhiteSpace(actual.ContentVersion));
             Assert.IsAssignableFrom<IDictionary<string, object>>(actual.Parameters);
             Assert.IsAssignableFrom<IDictionary<string, object>>(actual.Variables);
-            Assert.IsAssignableFrom<IDictionary<string, TemplateOutput>>(actual.Outputs);
+            Assert.IsAssignableFrom<IDictionary<string, object>>(actual.Outputs);
             Assert.IsAssignableFrom<IEnumerable<object>>(actual.Resources);
         }
 
@@ -100,7 +100,7 @@ namespace ArmEval.Core.Tests.ArmTemplate
             Assert.True(actual.Variables.ContainsKey("vnetName"));
             Assert.True(actual.Variables.ContainsKey("subnetName"));
 
-            Assert.IsAssignableFrom<IDictionary<string, TemplateOutput>>(actual.Outputs);
+            Assert.IsAssignableFrom<IDictionary<string, object>>(actual.Outputs);
             Assert.Equal(3, actual.Outputs.Keys.Count);
             Assert.True(actual.Outputs.ContainsKey("kubernetesMasterFqdn"));
             Assert.True(actual.Outputs.ContainsKey("aksResourceId"));
@@ -112,18 +112,19 @@ namespace ArmEval.Core.Tests.ArmTemplate
         }
 
         [Theory()]
-        [InlineData(@"[concat('string12', 'string34')]", ArmValueTypes.@string)]
-        [InlineData(@"[mod(7, 3)]", ArmValueTypes.@int)]
-        [InlineData(@"[not(equals(1, 10))]", ArmValueTypes.@bool)]
-        public void AddExpression_NoVariableOrParameter_AddsExpectedOutput(string text, ArmValueTypes outputType)
+        [InlineData(@"[concat('string12', 'string34')]", ArmValueTypes.@string, @"{ Type = String, Value = [concat('string12', 'string34')] }")]
+        [InlineData(@"[mod(7, 3)]", ArmValueTypes.@int, @"{ Type = Int, Value = [mod(7, 3)] }")]
+        [InlineData(@"[not(equals(1, 10))]", ArmValueTypes.@bool, @"{ Type = Bool, Value = [not(equals(1, 10))] }")]
+        public void AddExpression_NoVariableOrParameter_AddsExpectedOutput(string text,
+            ArmValueTypes outputType,
+            string outputString)
         {
             var template = new Template();
             var expression = new ArmTemplateExpression(text);
             template.AddExpression(expression, outputType);
             var actual = template.Outputs["expression"];
 
-            Assert.Equal(outputType.ToString(), actual.Type);
-            Assert.Equal(text, actual.Value);
+            Assert.Equal(outputString, actual.ToString());
         }
 
         [Theory()]
