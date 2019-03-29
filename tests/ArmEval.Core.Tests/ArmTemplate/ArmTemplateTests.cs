@@ -1,49 +1,16 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using Xunit;
 using ArmEval.Core.UserInputs;
 using ArmEval.Core.ArmTemplate;
 using System.Collections.ObjectModel;
+using ArmEval.Core.Tests.TestData;
 
 namespace ArmEval.Core.Tests.ArmTemplate
 {
-    public class InputVariablesTestData : IEnumerable<object[]>
-    {
-        private readonly List<object[]> _data = new List<object[]>
-        {
-            // Object properties represent (respectively) : expression text, output type, input variables
-            new object[] {@"[variables('vmName')]", ArmValueTypes.@string, new List<ArmTemplateVariable>()
-                {
-                    new ArmTemplateVariable("vmName", "testVm")
-                }
-            },
-            new object[] {@"[add(variables('number1'), 9)]", ArmValueTypes.@int, new List<ArmTemplateVariable>()
-                {
-                    new ArmTemplateVariable("number1", 8)
-                }
-            },
-            new object[] {@"[mul(variables('var1'), variables('var2'))]", ArmValueTypes.@int, new List<ArmTemplateVariable>()
-                {
-                    new ArmTemplateVariable("var1", 3),
-                    new ArmTemplateVariable("var2", 7)
-                }
-            },
-            new object[] {@"[variables('obj').Property2]", ArmValueTypes.@object, new List<ArmTemplateVariable>()
-                {
-                    new ArmTemplateVariable("obj", new {Property1 = "customString", Property2 = true})
-                }
-            }
-        };
-
-        public IEnumerator<object[]> GetEnumerator() => _data.GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-    }
-
     public class ArmTemplateTests
     {
         [Fact]

@@ -1,6 +1,7 @@
 ﻿using ArmEval.Core.ArmClient;
 using ArmEval.Core.ArmTemplate;
 using ArmEval.Core.Tests.MockHelpers;
+using ArmEval.Core.Tests.TestData;
 using ArmEval.Core.UserInputs;
 using ArmEval.Core.Utils;
 using Microsoft.Azure.Management.ResourceManager;
@@ -82,31 +83,22 @@ namespace ArmEval.Core.Tests.UserInputs
         }
 
         [Theory()]
-        [InlineData(@"[concat('string12', 'string56')]", ArmValueTypes.@string, "string12string56")]
-        [InlineData(@"[mod(7, 3)]", ArmValueTypes.@int, "1")]
-        [InlineData(@"[mul(6, 3)]", ArmValueTypes.@int, "18")]
-        [InlineData(@"[contains(createArray('one', 'two'), 'two')]", ArmValueTypes.@bool, "true")]
-        [InlineData(@"[not(equals(1, 10))]", ArmValueTypes.@bool, "true")]
-        [InlineData(@"[createArray(1, 2, 3)]", ArmValueTypes.array, @"[
-      1,
-      2,
-      3
-    ]")]
+        [ClassData(typeof(InvokeExpressionTestData))]
         public void Invoke_NoVariableOrParameter_ReturnsExpectedOutput(
             string text,
             ArmValueTypes expectedOutputType,
-            string expectedOutputValue)
+            string outputValue,
+            string expectedoutputString)
         {
             var expression = new ArmTemplateExpression(text);
             template.AddExpression(expression, expectedOutputType);
             var deployment = new MockArmDeployment()
-                .MockInvoke(expectedOutputType.ToString(), expectedOutputValue)
+                .MockInvoke(expectedOutputType.ToString(), outputValue)
                 .Object;
 
             var actual = expression.Invoke(deployment);
 
-            Assert.Equal(expectedOutputType.ToString(), actual);
-            Assert.Equal(expectedOutputValue, actual);
+            Assert.Equal(expectedoutputString, actual.ToString());
         }
     }
 }
