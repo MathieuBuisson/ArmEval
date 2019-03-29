@@ -7,6 +7,7 @@ using System.Linq;
 using ArmEval.Core.UserInputs;
 using System.Collections.ObjectModel;
 using ArmEval.Core.Extensions;
+using Newtonsoft.Json.Linq;
 
 namespace ArmEval.Core.ArmTemplate
 {

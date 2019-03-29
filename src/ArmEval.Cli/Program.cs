@@ -18,11 +18,11 @@ namespace ArmEval.Cli
                 var app = scope.Resolve<IApplication>();
                 app.Init();
 
-                var expression = new ArmTemplateExpression(@"[createArray(1, 2, 3)]");
+                var expression = new ArmTemplateExpression(@"[mul(6, 3)]");
                 
-                app.Template.AddExpression(expression, ArmValueTypes.array);
-                var deployment = new ArmDeployment(app.Client, app.ResourceGroup, app.Template);
-                var result = expression.Invoke(deployment);
+                app.Template.AddExpression(expression, ArmValueTypes.@int);
+                var deployment = new ArmDeployment(app.Client, app.ResourceGroup);
+                var result = expression.Invoke(deployment, ArmValueTypes.@int);
 
                 Console.WriteLine(result);
                 app.ResourceGroup.DeleteIfExists(app.Client);

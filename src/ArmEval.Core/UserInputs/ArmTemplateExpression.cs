@@ -64,14 +64,28 @@ namespace ArmEval.Core.UserInputs
             return op;
         }
 
-        public object Invoke(IArmDeployment deployment)
+        public object Invoke(IArmDeployment deployment, ArmValueTypes expectedOutputType)
         {
+            SetTemplateOutput(deployment.Template, expectedOutputType);
             string deploymentOutputs = deployment.Invoke();
             var expressionOutput = JToken.Parse(deploymentOutputs)["expression"];
             var expressionOutputStr = expressionOutput.ToString();
 
             var output = JsonConvert.DeserializeObject(expressionOutputStr);
             return output;
+        }
+
+        public void SetTemplateOutput(JObject template, ArmValueTypes expectedOutputType)
+        {
+            JObject OutputObj = new JObject(
+                new JProperty(
+                    "expression", new JObject(
+                        new JProperty("Type", expectedOutputType.ToString()),
+                        new JProperty("Value", Text)
+                    )
+                )
+            );
+            template["outputs"] = OutputObj;
         }
 
         private IEnumerable<string> parseVariables(string text)

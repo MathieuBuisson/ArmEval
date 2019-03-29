@@ -96,7 +96,7 @@ namespace ArmEval.Core.Tests.UserInputs
                 .MockInvoke(expectedOutputType.ToString(), outputValue)
                 .Object;
 
-            var actual = expression.Invoke(deployment);
+            var actual = expression.Invoke(deployment, expectedOutputType);
 
             Assert.Equal(expectedoutputString, actual.ToString());
         }

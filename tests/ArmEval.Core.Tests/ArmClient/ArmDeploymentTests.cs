@@ -30,7 +30,7 @@ namespace ArmEval.Core.Tests.ArmClient
         [Fact]
         public void Constructor_SetsAllProperties()
         {
-            var actual = new ArmDeployment(client, resourceGroup, emptyTemplate);
+            var actual = new ArmDeployment(client, resourceGroup);
 
             Assert.Same(client, actual.Client);
             Assert.Same(rgName, actual.ResourceGroup.Name);

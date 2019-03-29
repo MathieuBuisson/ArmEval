@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using ArmEval.Core.ArmTemplate;
 using ArmEval.Core.Extensions;
 using ArmEval.Core.Utils;
+using Newtonsoft.Json.Linq;
 
 namespace ArmEval.Core.ArmClient
 {
@@ -13,15 +14,23 @@ namespace ArmEval.Core.ArmClient
         public IResourceManagementClient Client { get; set; }
         public ResourceGroup ResourceGroup { get; set; }
         public string DeploymentName { get; }
-        public ITemplate Template { get; set; }
+        public JObject Template { get; set; }
         public Deployment Deployment { get; set; }
 
         public ArmDeployment(IResourceManagementClient resourceManagementClient,
-            ResourceGroup resourceGroup, ITemplate template)
+            ResourceGroup resourceGroup)
         {
             Client = resourceManagementClient;
             ResourceGroup = resourceGroup;
-            Template = template;
+            var jsonString = @"{
+  '$schema': 'https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#',
+  'contentVersion': '1.0.0.0',
+  'parameters': {},
+  'variables': {},
+  'resources': [],
+  'outputs': {}
+}";
+            Template = JObject.Parse(jsonString);
 
             var suffix = UniqueString.Create(5);
             DeploymentName = $"armeval-deployment-{suffix}";
@@ -31,7 +40,7 @@ namespace ArmEval.Core.ArmClient
             {
                 Mode = DeploymentMode.Incremental,
                 Template = Template,
-                Parameters = Template.Parameters
+                Parameters = Template["parameters"]
             };
         }
 
