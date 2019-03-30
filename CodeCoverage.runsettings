@@ -7,7 +7,7 @@
           <CodeCoverage>
             <ModulePaths>
               <Include>
-                <ModulePath>ArmEval.Core.dll</ModulePath>
+                <ModulePath>.\*ArmEval\.Core\.dll</ModulePath>
               </Include>
             </ModulePaths>
           </CodeCoverage>
