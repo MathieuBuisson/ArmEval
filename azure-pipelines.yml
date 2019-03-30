@@ -18,8 +18,6 @@ pool:
   vmImage: $(imageName)
 
 steps:
-- script: echo BuildConfiguration value is %BuildConfiguration%
-
 - task: DotNetCoreCLI@2
   name: dotnetRestore
   displayName: Restore Dependencies
@@ -35,9 +33,10 @@ steps:
     projects: '**/*.csproj'
     arguments: '--configuration $(BuildConfiguration)'
 
-# - script: |
-#     dotnet build -nodereuse:false -c $(BuildConfiguration) --no-restore
-#     cd ./tests/ArmEval.Core.Tests/
-#     dotnet test -c $(BuildConfiguration) --no-build -l trx -v normal
-#   name: dotnetTest
-#   displayName: Run Tests
+- task: DotNetCoreCLI@2
+  name: dotnetTest
+  displayName: Run Unit Tests
+  inputs:
+    command: test
+    projects: 'tests/**/*.csproj'
+    arguments: '--configuration $(buildConfiguration) --collect "Code coverage"'
