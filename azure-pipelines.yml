@@ -1,6 +1,5 @@
 name: "0.1$(Rev:.r)"
 variables:
-- group: AzureConnectionData
 - name: BuildConfiguration
   value: Release
 
@@ -28,42 +27,8 @@ steps:
     projects: '**/*.csproj'
 
 - script: |
-    echo SubscriptionId = %ArmEval_SubscriptionId%
-    echo TenantId = %ArmEval_TenantId%
-    echo ClientId = %ArmEval_ClientId%
-    echo SecretTenantId = %Secret_TenantId%
-  env:
-    ArmEval_TenantId: $(TenantId)
-    ArmEval_ClientId: $(ClientId)
-    ArmEval_ClientSecret: $(ClientSecret)
-    ArmEval_SubscriptionId: $(SubscriptionId)
-    Secret_TenantId: $(SECRET_TENANTID)
-
-- script: |
     dotnet build -nodereuse:false -c $(BuildConfiguration) --no-restore
     cd ./tests/ArmEval.Core.Tests/
-    dotnet test -c $(BuildConfiguration) -l trx -v normal
+    dotnet test -c $(BuildConfiguration) --no-build -l trx -v normal
   name: dotnetTest
   displayName: Run Tests
-  timeoutInMinutes: 90
-  env:
-    ArmEval_TenantId: $(TenantId)
-    ArmEval_ClientId: $(ClientId)
-    ArmEval_ClientSecret: $(ClientSecret)
-    ArmEval_SubscriptionId: $(SubscriptionId)
-
-- task: DotNetCoreCLI@2
-  name: dotnetPublish
-  displayName: Publish files
-  inputs:
-    command: publish
-    configuration: $(BuildConfiguration)
-    arguments: '--no-restore --output $(Build.ArtifactStagingDirectory)/publish'
-
-- task: PublishBuildArtifacts@1
-  name: publishArtifacts
-  displayName: Publish build artifacts
-  inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)/publish'
-    ArtifactName: publish-$(platform)
-    publishLocation: Container
