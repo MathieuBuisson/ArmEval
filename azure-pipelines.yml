@@ -39,4 +39,4 @@ steps:
   inputs:
     command: test
     projects: 'tests/**/*.csproj'
-    arguments: '--no-build -c $(buildConfiguration) --collect "Code coverage" --settings CodeCoverage.runsettings'
+    arguments: '--no-build -c $(buildConfiguration) --collect "Code coverage" --settings $(Build.SourcesDirectory)\CodeCoverage.runsettings'
