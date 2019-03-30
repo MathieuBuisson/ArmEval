@@ -10,11 +10,6 @@
                 <ModulePath>ArmEval.Core.dll</ModulePath>
               </Include>
             </ModulePaths>
-            <CompanyNames>
-              <Exclude>
-                <CompanyName>.*Microsoft.*</CompanyName>
-              </Exclude>
-            </CompanyNames>
           </CodeCoverage>
         </Configuration>
       </DataCollector>
