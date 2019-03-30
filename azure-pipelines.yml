@@ -40,18 +40,3 @@ steps:
     command: test
     projects: 'tests/**/*.csproj'
     arguments: '--no-build -c $(buildConfiguration) --collect "Code coverage" --settings $(Build.SourcesDirectory)\CodeCoverage.runsettings'
-
-- task: CopyFiles@2
-  name: copyCodeCoverageFile
-  displayName: Copy Code Coverage File
-  inputs:
-    sourceFolder: 'D:/a/_temp'
-    contents: '**/*.coverage'
-    targetFolder: '$(Common.TestResultsDirectory)'
-
-- task: PublishBuildArtifacts@1
-  name: publishCodeCoverageFile
-  displayName: Publish Code Coverage File as Artifact
-  inputs:
-    pathtoPublish: '$(Common.TestResultsDirectory)'
-    artifactName: 'Coverage'
