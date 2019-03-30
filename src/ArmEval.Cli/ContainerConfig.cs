@@ -1,5 +1,4 @@
-﻿using ArmEval.Core.ArmTemplate;
-using Autofac;
+﻿using Autofac;
 using Microsoft.Azure.Management.ResourceManager;
 using Microsoft.Azure.Management.ResourceManager.Models;
 using Microsoft.Extensions.Configuration;
@@ -23,7 +22,6 @@ namespace ArmEval.Cli
             builder.RegisterInstance(creds).As<ServiceClientCredentials>();
             builder.RegisterType<ResourceManagementClient>().As<IResourceManagementClient>();
             builder.RegisterType<ResourceGroup>();
-            builder.RegisterType<Template>().As<ITemplate>();
             builder.RegisterType<Application>().As<IApplication>();
 
             return builder.Build();

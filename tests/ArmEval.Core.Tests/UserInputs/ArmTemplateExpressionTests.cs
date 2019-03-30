@@ -1,5 +1,4 @@
-﻿using ArmEval.Core.ArmClient;
-using ArmEval.Core.ArmTemplate;
+﻿using ArmEval.Core.ArmTemplate;
 using ArmEval.Core.Tests.MockHelpers;
 using ArmEval.Core.Tests.TestData;
 using ArmEval.Core.UserInputs;
@@ -17,12 +16,10 @@ namespace ArmEval.Core.Tests.UserInputs
         private readonly IResourceManagementClient client;
         private readonly string location;
         private readonly string rgName;
-        private readonly ITemplate template;
         private readonly ResourceGroup resourceGroup;
 
         public ArmTemplateExpressionTests()
         {
-            template = new Template();
             location = "North Europe";
             rgName = $"ArmEvalDeploy-{UniqueString.Create(5)}";
             resourceGroup = new ResourceGroup(location, name: rgName);
@@ -91,7 +88,6 @@ namespace ArmEval.Core.Tests.UserInputs
             string expectedoutputString)
         {
             var expression = new ArmTemplateExpression(text);
-            template.AddExpression(expression, expectedOutputType);
             var deployment = new MockArmDeployment()
                 .MockInvoke(expectedOutputType.ToString(), outputValue)
                 .Object;

@@ -5,6 +5,7 @@ using ArmEval.Core.Utils;
 using Microsoft.Azure.Management.ResourceManager;
 using Microsoft.Azure.Management.ResourceManager.Models;
 using Moq;
+using Newtonsoft.Json.Linq;
 using Xunit;
 
 namespace ArmEval.Core.Tests.ArmClient
@@ -14,12 +15,12 @@ namespace ArmEval.Core.Tests.ArmClient
         private readonly IResourceManagementClient client;
         private readonly string location;
         private readonly string rgName;
-        private readonly ITemplate emptyTemplate;
+        private readonly JObject emptyTemplate;
         private readonly ResourceGroup resourceGroup;
 
         public ArmDeploymentTests()
         {
-            emptyTemplate = new Template();
+            emptyTemplate = new TemplateBuilder().Template;
             location = "North Europe";
             rgName = $"ArmEvalDeploy-{UniqueString.Create(5)}";
             resourceGroup = new ResourceGroup(location, name: rgName);
@@ -35,7 +36,6 @@ namespace ArmEval.Core.Tests.ArmClient
             Assert.Same(client, actual.Client);
             Assert.Same(rgName, actual.ResourceGroup.Name);
             Assert.Same(location, actual.ResourceGroup.Location);
-            Assert.Same(emptyTemplate, actual.Template);
             Assert.Matches(@"^armeval-deployment-\w{5}$", actual.DeploymentName);
             Assert.IsType<Deployment>(actual.Deployment);
             Assert.Equal(emptyTemplate, actual.Deployment.Properties.Template);

@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using ArmEval.Core.ArmClient;
+using ArmEval.Core.ArmTemplate;
 using ArmEval.Core.Extensions;
+using Microsoft.Azure.Management.ResourceManager.Models;
 using Moq;
 
 namespace ArmEval.Core.Tests.MockHelpers
@@ -24,8 +26,15 @@ namespace ArmEval.Core.Tests.MockHelpers
                 .Append(outputValue)
                 .Append("\r\n  }\r\n}");
 
-            var outputString = strBuilder.ToString();
+            var mockDeployment = new Deployment();
+            mockDeployment.Properties = new DeploymentProperties
+            {
+                Mode = DeploymentMode.Incremental,
+                Template = new TemplateBuilder().Template,
+            };
 
+            SetupProperty(m => m.Deployment, mockDeployment);
+            var outputString = strBuilder.ToString();
             Setup(m => m.Invoke()).Returns(outputString);
             return this;
         }
