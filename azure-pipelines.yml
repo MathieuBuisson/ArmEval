@@ -39,7 +39,13 @@ steps:
   inputs:
     command: test
     projects: 'tests/**/*.csproj'
-    arguments: '--no-build -c $(buildConfiguration) -r $(Common.TestResultsDirectory) --collect "Code coverage" --settings $(Build.SourcesDirectory)\CodeCoverage.runsettings'
+    arguments: '--no-build -c $(buildConfiguration) --collect "Code coverage" --results-directory $(Common.TestResultsDirectory) --settings $(Build.SourcesDirectory)\CodeCoverage.runsettings'
+
+# - task: CopyFiles@2
+#   inputs:
+#     sourceFolder: '$(Build.SourcesDirectory)'
+#     contents: '**/$(BuildConfiguration)/**/?(*.exe|*.dll|*.pdb)'
+#     targetFolder: '$(Common.TestResultsDirectory)'
 
 - task: PublishBuildArtifacts@1
   inputs:
