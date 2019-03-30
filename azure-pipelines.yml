@@ -18,6 +18,8 @@ pool:
   vmImage: $(imageName)
 
 steps:
+- script: echo BuildConfiguration value is %BuildConfiguration%
+
 - task: DotNetCoreCLI@2
   name: dotnetRestore
   displayName: Restore Dependencies
@@ -31,7 +33,7 @@ steps:
   inputs:
     command: build
     projects: '**/*.csproj'
-    configuration: $(BuildConfiguration)
+    arguments: '--configuration $(BuildConfiguration)'
 
 # - script: |
 #     dotnet build -nodereuse:false -c $(BuildConfiguration) --no-restore
