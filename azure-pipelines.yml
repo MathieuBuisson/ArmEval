@@ -39,4 +39,4 @@ steps:
   inputs:
     command: test
     projects: 'tests/**/*.csproj'
-    arguments: '--configuration $(buildConfiguration) --collect "Code coverage"'
+    arguments: '--no-build --configuration $(buildConfiguration) --collect "Code coverage"'
