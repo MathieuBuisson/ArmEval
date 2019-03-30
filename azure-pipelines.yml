@@ -25,9 +25,17 @@ steps:
     command: restore
     projects: '**/*.csproj'
 
-- script: |
-    dotnet build -nodereuse:false -c $(BuildConfiguration) --no-restore
-    cd ./tests/ArmEval.Core.Tests/
-    dotnet test -c $(BuildConfiguration) --no-build -l trx -v normal
-  name: dotnetTest
-  displayName: Run Tests
+- task: DotNetCoreCLI@2
+  name: dotnetBuild
+  displayName: Compile projects
+  inputs:
+    command: build
+    projects: '**/*.csproj'
+    configuration: $(BuildConfiguration)
+
+# - script: |
+#     dotnet build -nodereuse:false -c $(BuildConfiguration) --no-restore
+#     cd ./tests/ArmEval.Core.Tests/
+#     dotnet test -c $(BuildConfiguration) --no-build -l trx -v normal
+#   name: dotnetTest
+#   displayName: Run Tests
