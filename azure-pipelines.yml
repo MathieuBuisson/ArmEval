@@ -1,7 +1,6 @@
 name: "0.1$(Rev:.r)"
 variables:
-- name: BuildConfiguration
-  value: Release
+  BuildConfiguration: Release
 
 strategy:
   matrix:
