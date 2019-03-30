@@ -39,4 +39,9 @@ steps:
   inputs:
     command: test
     projects: 'tests/**/*.csproj'
-    arguments: '--no-build -c $(buildConfiguration) --collect "Code coverage" --settings $(Build.SourcesDirectory)\CodeCoverage.runsettings'
+    arguments: '--no-build -c $(buildConfiguration) -r $(Common.TestResultsDirectory) --collect "Code coverage" --settings $(Build.SourcesDirectory)\CodeCoverage.runsettings'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathtoPublish: '$(Common.TestResultsDirectory)'
+    artifactName: 'TestResults'
