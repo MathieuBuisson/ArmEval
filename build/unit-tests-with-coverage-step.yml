@@ -1,0 +1,8 @@
+steps:
+- task: DotNetCoreCLI@2
+  name: dotnetTest
+  displayName: Run Unit Tests
+  inputs:
+    command: test
+    projects: 'tests/**/*.csproj'
+    arguments: '--no-build -c $(buildConfiguration) --collect "Code coverage" --settings $(Build.SourcesDirectory)\CodeCoverage.runsettings'

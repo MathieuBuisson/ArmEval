@@ -1,6 +1,3 @@
-parameters:
-  OS: ''
-
 steps:
 - task: DotNetCoreCLI@2
   name: dotnetRestore
@@ -16,21 +13,3 @@ steps:
     command: build
     projects: '**/*.csproj'
     arguments: '-c $(BuildConfiguration)'
-
-- ${{ if eq(parameters.OS, 'Windows') }}:
-  - task: DotNetCoreCLI@2
-    name: dotnetTest
-    displayName: Run Unit Tests
-    inputs:
-      command: test
-      projects: 'tests/**/*.csproj'
-      arguments: '--no-build -c $(buildConfiguration) --collect "Code coverage" --settings $(Build.SourcesDirectory)\CodeCoverage.runsettings'
-
-- ${{ if in(parameters.OS, 'Linux', 'MacOS') }}:
-  - task: DotNetCoreCLI@2
-    name: dotnetTest
-    displayName: Run Unit Tests
-    inputs:
-      command: test
-      projects: 'tests/**/*.csproj'
-      arguments: '--no-build -c $(buildConfiguration)'
