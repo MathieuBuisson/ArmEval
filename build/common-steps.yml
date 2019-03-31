@@ -24,7 +24,7 @@ steps:
     inputs:
       command: test
       projects: 'tests/**/*.csproj'
-        arguments: '--no-build -c $(buildConfiguration) --collect "Code coverage" --settings $(Build.SourcesDirectory)\CodeCoverage.runsettings'
+      arguments: '--no-build -c $(buildConfiguration) --collect "Code coverage" --settings $(Build.SourcesDirectory)\CodeCoverage.runsettings'
 
 - ${{ if in(parameters.OS, 'Linux', 'MacOS') }}:
   - task: DotNetCoreCLI@2
@@ -33,4 +33,4 @@ steps:
     inputs:
       command: test
       projects: 'tests/**/*.csproj'
-        arguments: '--no-build -c $(buildConfiguration)'
+      arguments: '--no-build -c $(buildConfiguration)'
