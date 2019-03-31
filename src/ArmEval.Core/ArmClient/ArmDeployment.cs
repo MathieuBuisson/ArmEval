@@ -21,7 +21,7 @@ namespace ArmEval.Core.ArmClient
             ResourceGroup = resourceGroup;
             var template = new TemplateBuilder().Template;
 
-            var suffix = UniqueString.Create(5);
+            var suffix = UniqueString.Create();
             DeploymentName = $"armeval-deployment-{suffix}";
 
             Deployment = new Deployment();

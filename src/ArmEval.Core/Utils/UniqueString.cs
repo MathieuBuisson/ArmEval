@@ -7,7 +7,7 @@ namespace ArmEval.Core.Utils
 {
     public static class UniqueString
     {
-        public static string Create(int length)
+        public static string Create(int length = 5)
         {
             var randomChars = Path.GetRandomFileName().ToCharArray();
             var filteredChars = randomChars

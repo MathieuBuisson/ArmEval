@@ -66,6 +66,11 @@ namespace ArmEval.Core.UserInputs
 
         public object Invoke(IArmDeployment deployment, ArmValueTypes expectedOutputType)
         {
+            if (deployment is null)
+            {
+                throw new ArgumentNullException(nameof(deployment));
+            }
+
             var template = new TemplateBuilder()
                 .AddExpression(this, expectedOutputType)
                 .Template;

@@ -27,7 +27,7 @@ namespace ArmEval.Cli
             Client.SubscriptionId = _config["SubscriptionId"];
             AzureRegion = "North Europe";
             ResourceGroup.Location = AzureRegion;
-            ResourceGroup.Name = $"ArmEval{UniqueString.Create(5)}";
+            ResourceGroup.Name = $"ArmEval{UniqueString.Create()}";
         }
     }
 }

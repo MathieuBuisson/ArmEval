@@ -2,41 +2,33 @@ name: "0.1$(Rev:.r)"
 variables:
   BuildConfiguration: Release
 
-strategy:
-  matrix:
-    # linux:
-    #   platform: linux
-    #   imageName: 'ubuntu-16.04'
-    # mac:
-    #   platform: mac
-    #   imageName: 'macos-10.13'
-    windows:
-      platform: windows
-      imageName: 'vs2017-win2016'
+jobs:
+- job: Linux
+  variables:
+    os: Linux
+  pool:
+    vmImage: 'ubuntu-16.04'
+  steps:
+  - template: ci-templates/common-steps.yml
+    parameters:
+      OS: $(os)
 
-pool:
-  vmImage: $(imageName)
+- job: MacOS
+  variables:
+    os: MacOS
+  pool:
+    vmImage: 'macOS-10.13'
+  steps:
+  - template: ci-templates/common-steps.yml
+    parameters:
+      OS: $(os)
 
-steps:
-- task: DotNetCoreCLI@2
-  name: dotnetRestore
-  displayName: Restore Dependencies
-  inputs:
-    command: restore
-    projects: '**/*.csproj'
-
-- task: DotNetCoreCLI@2
-  name: dotnetBuild
-  displayName: Compile Projects
-  inputs:
-    command: build
-    projects: '**/*.csproj'
-    arguments: '-c $(BuildConfiguration)'
-
-- task: DotNetCoreCLI@2
-  name: dotnetTest
-  displayName: Run Unit Tests
-  inputs:
-    command: test
-    projects: 'tests/**/*.csproj'
-    arguments: '--no-build -c $(buildConfiguration) --collect "Code coverage" --settings $(Build.SourcesDirectory)\CodeCoverage.runsettings'
+- job: Windows
+  variables:
+    os: Windows
+  pool:
+    vmImage: 'vs2017-win2016'
+  steps:
+  - template: ci-templates/common-steps.yml
+    parameters:
+      OS: $(os)

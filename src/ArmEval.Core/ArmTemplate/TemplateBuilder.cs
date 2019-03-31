@@ -25,6 +25,11 @@ namespace ArmEval.Core.ArmTemplate
 
         public TemplateBuilder AddExpression(ArmTemplateExpression expression, ArmValueTypes expectedOutputType)
         {
+            if (expression is null)
+            {
+                throw new ArgumentNullException(nameof(expression));
+            }
+
             JObject OutputObj = new JObject(
                 new JProperty(
                     "expression", new JObject(

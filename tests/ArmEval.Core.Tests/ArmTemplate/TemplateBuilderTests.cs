@@ -32,6 +32,16 @@ namespace ArmEval.Core.Tests.ArmTemplate
             Assert.IsType<JObject>(actual["outputs"]);
         }
 
+        [Fact]
+        public void AddExpression_NullExpression_ThrowsArgumentNullException()
+        {
+            var templateBuilder = new TemplateBuilder();
+            Action act = () => { templateBuilder.AddExpression(null, ArmValueTypes.@int); };
+            var ex = Record.Exception(act);
+
+            Assert.IsType<ArgumentNullException>(ex);
+        }
+
         [Theory]
         [InlineData(@"[concat('string1', 'String2')]", ArmValueTypes.@string)]
         [InlineData(@"[mod(7, 3)]", ArmValueTypes.@int)]

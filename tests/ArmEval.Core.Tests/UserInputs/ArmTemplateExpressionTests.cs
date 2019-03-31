@@ -21,7 +21,7 @@ namespace ArmEval.Core.Tests.UserInputs
         public ArmTemplateExpressionTests()
         {
             location = "North Europe";
-            rgName = $"ArmEvalDeploy-{UniqueString.Create(5)}";
+            rgName = $"ArmEvalDeploy-{UniqueString.Create()}";
             resourceGroup = new ResourceGroup(location, name: rgName);
 
             client = new Mock<IResourceManagementClient>().Object;
@@ -77,6 +77,18 @@ namespace ArmEval.Core.Tests.UserInputs
             Assert.Equal(text, actual.Text);
             Assert.Equal(expectedVariables, actual.VariableNames);
             Assert.Equal(expectedParameters, actual.ParameterNames);
+        }
+
+        [Fact]
+        public void Invoke_NullDeployment_ThrowsArgumentNullException()
+        {
+            var expression = new ArmTemplateExpression(@"[not(true)]");
+            var expectedOutputType = ArmValueTypes.@bool;
+
+            Action act = () => { expression.Invoke(null, expectedOutputType); };
+            var ex = Record.Exception(act);
+
+            Assert.IsType<ArgumentNullException>(ex);
         }
 
         [Theory()]

@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace ArmEval.Core.ArmTemplate
 {
-    public class ArmTypesConverter
+    public static class ArmTypesConverter
     {
         public static List<ArmValueTypes> GetPossibleArmValueTypes()
         {

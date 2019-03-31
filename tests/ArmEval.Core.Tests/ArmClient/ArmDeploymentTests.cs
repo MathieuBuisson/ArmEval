@@ -22,7 +22,7 @@ namespace ArmEval.Core.Tests.ArmClient
         {
             emptyTemplate = new TemplateBuilder().Template;
             location = "North Europe";
-            rgName = $"ArmEvalDeploy-{UniqueString.Create(5)}";
+            rgName = $"ArmEvalDeploy-{UniqueString.Create()}";
             resourceGroup = new ResourceGroup(location, name: rgName);
 
             client = new Mock<IResourceManagementClient>().Object;
