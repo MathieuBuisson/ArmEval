@@ -16,35 +16,35 @@ namespace ArmEval.Core.Tests.TestData
                 @"[concat('string12', 'string56')]",
                 ArmValueTypes.@string,
                 "string12string56",
-                "{\r\n  \"type\": \"String\",\r\n  \"value\": \"string12string56\"\r\n}"
+                $"{{{Environment.NewLine}  \"type\": \"String\",{Environment.NewLine}  \"value\": \"string12string56\"{Environment.NewLine}}}"
             },
             new object[]
             {
                 @"[mod(7, 3)]",
                 ArmValueTypes.@int,
                 "1",
-                "{\r\n  \"type\": \"Int\",\r\n  \"value\": 1\r\n}"
+                $"{{{Environment.NewLine}  \"type\": \"Int\",{Environment.NewLine}  \"value\": 1{Environment.NewLine}}}"
             },
             new object[]
             {
                 @"[mul(6, 3)]",
                 ArmValueTypes.@int,
                 "18",
-                "{\r\n  \"type\": \"Int\",\r\n  \"value\": 18\r\n}"
+                $"{{{Environment.NewLine}  \"type\": \"Int\",{Environment.NewLine}  \"value\": 18{Environment.NewLine}}}"
             },
             new object[]
             {
                 @"[contains(createArray('one', 'two'), 'two')]",
                 ArmValueTypes.@bool,
                 "true",
-                "{\r\n  \"type\": \"Bool\",\r\n  \"value\": true\r\n}"
+                $"{{{Environment.NewLine}  \"type\": \"Bool\",{Environment.NewLine}  \"value\": true{Environment.NewLine}}}"
             },
             new object[]
             {
                 @"[not(equals(1, 10))]",
                 ArmValueTypes.@bool,
                 "true",
-                "{\r\n  \"type\": \"Bool\",\r\n  \"value\": true\r\n}"
+                $"{{{Environment.NewLine}  \"type\": \"Bool\",{Environment.NewLine}  \"value\": true{Environment.NewLine}}}"
             },
             new object[]
             {
@@ -55,7 +55,7 @@ namespace ArmEval.Core.Tests.TestData
       2,
       3
     ]",
-                "{\r\n  \"type\": \"Array\",\r\n  \"value\": [\r\n    1,\r\n    2,\r\n    3\r\n  ]\r\n}"
+                $"{{{Environment.NewLine}  \"type\": \"Array\",{Environment.NewLine}  \"value\": [{Environment.NewLine}    1,{Environment.NewLine}    2,{Environment.NewLine}    3{Environment.NewLine}  ]{Environment.NewLine}}}"
             }
         };
 
