@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace ArmEval.Core.ArmTemplate
@@ -39,8 +40,37 @@ namespace ArmEval.Core.ArmTemplate
                 )
             );
             Template["outputs"] = OutputObj;
-
             return this;
+        }
+
+        public TemplateBuilder AddVariables(ArmTemplateExpression expression, ICollection<ArmTemplateVariable> inputVariables)
+        {
+            // Adding input variables to the template only if the expression references variable(s)
+            if (expression.VariableNames.Any())
+            {
+                CheckExpressionVariablesAreInInput(expression, inputVariables);
+
+                JObject variablesObj = new JObject();
+                foreach (var inputVar in inputVariables)
+                {
+                    variablesObj.Add(new JProperty(inputVar.Name, inputVar.Value));
+                }
+                Template["variables"] = variablesObj;
+            }
+            return this;
+        }
+
+        private void CheckExpressionVariablesAreInInput(ArmTemplateExpression expression, ICollection<ArmTemplateVariable> inputVariables)
+        {
+            var missingVariables = inputVariables is null ?
+                expression.VariableNames :
+                expression.VariableNames.Except(inputVariables.Select(v => v.Name));
+
+            if (missingVariables.Any())
+            {
+                var missingString = string.Join(", ", missingVariables);
+                throw new ArgumentNullException($"Specify a value for the following variable(s) : {missingString}");
+            }
         }
     }
 }

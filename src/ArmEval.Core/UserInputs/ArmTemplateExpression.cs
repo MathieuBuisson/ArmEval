@@ -64,7 +64,9 @@ namespace ArmEval.Core.UserInputs
             return op;
         }
 
-        public object Invoke(IArmDeployment deployment, ArmValueTypes expectedOutputType)
+        public object Invoke(IArmDeployment deployment,
+            ArmValueTypes expectedOutputType,
+            ICollection<ArmTemplateVariable> inputVariables)
         {
             if (deployment is null)
             {
@@ -73,6 +75,7 @@ namespace ArmEval.Core.UserInputs
 
             var template = new TemplateBuilder()
                 .AddExpression(this, expectedOutputType)
+                .AddVariables(this, inputVariables)
                 .Template;
             deployment.Deployment.Properties.Template = template;
 

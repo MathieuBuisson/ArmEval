@@ -7,6 +7,7 @@ using Microsoft.Azure.Management.ResourceManager;
 using Microsoft.Azure.Management.ResourceManager.Models;
 using Moq;
 using System;
+using System.Collections.Generic;
 using Xunit;
 
 namespace ArmEval.Core.Tests.UserInputs
@@ -104,7 +105,26 @@ namespace ArmEval.Core.Tests.UserInputs
                 .MockInvoke(expectedOutputType.ToString(), outputValue)
                 .Object;
 
-            var actual = expression.Invoke(deployment, expectedOutputType);
+            var actual = expression.Invoke(deployment, expectedOutputType, null);
+
+            Assert.Equal(expectedoutputString, actual.ToString());
+        }
+
+        [Theory()]
+        [ClassData(typeof(InvokeExpressionWithVariablesTestData))]
+        public void Invoke_WithVariables_ReturnsExpectedVariablesAndOutput(
+            string text,
+            ICollection<ArmTemplateVariable> inputVariables,
+            ArmValueTypes expectedOutputType,
+            string outputValue,
+            string expectedoutputString)
+        {
+            var expression = new ArmTemplateExpression(text);
+            var deployment = new MockArmDeployment()
+                .MockInvoke(expectedOutputType.ToString(), outputValue)
+                .Object;
+
+            var actual = expression.Invoke(deployment, expectedOutputType, inputVariables);
 
             Assert.Equal(expectedoutputString, actual.ToString());
         }
