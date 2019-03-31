@@ -23,8 +23,7 @@ steps:
   inputs:
     command: test
     projects: 'tests/**/*.csproj'
-    - ${{ if eq(parameters.OS, 'Windows') }}:
+      ${{ if eq(parameters.OS, 'Windows') }}:
       arguments: '--no-build -c $(buildConfiguration) --collect "Code coverage" --settings $(Build.SourcesDirectory)\CodeCoverage.runsettings'
-    - ${{ if in(parameters.OS, 'Linux', 'MacOS') }}:
-    ${{ if in(variables['Build.Reason'], 'Manual', 'Schedule') }}:
+      ${{ if in(parameters.OS, 'Linux', 'MacOS') }}:
       arguments: '--no-build -c $(buildConfiguration)'

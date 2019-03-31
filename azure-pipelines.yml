@@ -9,7 +9,7 @@ jobs:
   pool:
     vmImage: 'ubuntu-16.04'
   steps:
-  - template: ci-templates/common-steps.yml
+  - template: build/common-steps.yml
     parameters:
       OS: $(os)
 
@@ -19,7 +19,7 @@ jobs:
   pool:
     vmImage: 'macOS-10.13'
   steps:
-  - template: ci-templates/common-steps.yml
+  - template: build/common-steps.yml
     parameters:
       OS: $(os)
 
@@ -29,6 +29,6 @@ jobs:
   pool:
     vmImage: 'vs2017-win2016'
   steps:
-  - template: ci-templates/common-steps.yml
+  - template: build/common-steps.yml
     parameters:
       OS: $(os)
