@@ -86,19 +86,20 @@ namespace ArmEval.Core.Tests.UserInputs
             var expression = new ArmTemplateExpression(@"[not(true)]");
             var expectedOutputType = ArmValueTypes.@bool;
 
-            Action act = () => { expression.Invoke(null, expectedOutputType); };
+            Action act = () => { expression.Invoke(null, expectedOutputType, null); };
             var ex = Record.Exception(act);
 
             Assert.IsType<ArgumentNullException>(ex);
         }
 
         [Theory()]
-        [ClassData(typeof(InvokeExpressionTestData))]
+        [ExpressionTestData]
         public void Invoke_NoVariableOrParameter_ReturnsExpectedOutput(
             string text,
             ArmValueTypes expectedOutputType,
             string outputValue,
-            string expectedoutputString)
+            string expectedoutputString
+        )
         {
             var expression = new ArmTemplateExpression(text);
             var deployment = new MockArmDeployment()
@@ -111,13 +112,14 @@ namespace ArmEval.Core.Tests.UserInputs
         }
 
         [Theory()]
-        [ClassData(typeof(InvokeExpressionWithVariablesTestData))]
+        [ExpressionWithVariablesTestData]
         public void Invoke_WithVariables_ReturnsExpectedVariablesAndOutput(
             string text,
             ICollection<ArmTemplateVariable> inputVariables,
             ArmValueTypes expectedOutputType,
             string outputValue,
-            string expectedoutputString)
+            string expectedoutputString
+        )
         {
             var expression = new ArmTemplateExpression(text);
             var deployment = new MockArmDeployment()

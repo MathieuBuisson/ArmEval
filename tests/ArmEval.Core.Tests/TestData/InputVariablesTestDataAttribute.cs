@@ -3,12 +3,19 @@ using ArmEval.Core.UserInputs;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
+using Xunit.Sdk;
 
 namespace ArmEval.Core.Tests.TestData
 {
-    public class InputVariablesTestData : IEnumerable<object[]>
+    public class InputVariablesTestDataAttribute : DataAttribute
     {
+        public override IEnumerable<object[]> GetData(MethodInfo testMethod)
+        {
+            return _data;
+        }
+
         private readonly List<object[]> _data = new List<object[]>
         {
             // Object properties represent (respectively) : expression text, output type, input variables
@@ -34,8 +41,5 @@ namespace ArmEval.Core.Tests.TestData
                 }
             }
         };
-
-        public IEnumerator<object[]> GetEnumerator() => _data.GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

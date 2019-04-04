@@ -2,12 +2,19 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
+using Xunit.Sdk;
 
 namespace ArmEval.Core.Tests.TestData
 {
-    public class InvokeExpressionWithVariablesTestData : IEnumerable<object[]>
+    public class ExpressionTestDataAttribute : DataAttribute
     {
+        public override IEnumerable<object[]> GetData(MethodInfo testMethod)
+        {
+            return _data;
+        }
+
         private readonly List<object[]> _data = new List<object[]>
         {
             // Object properties represent (respectively) : expression text, output value type, output value, expected output string
@@ -58,8 +65,5 @@ namespace ArmEval.Core.Tests.TestData
                 $"{{{Environment.NewLine}  \"type\": \"Array\",{Environment.NewLine}  \"value\": [{Environment.NewLine}    1,{Environment.NewLine}    2,{Environment.NewLine}    3{Environment.NewLine}  ]{Environment.NewLine}}}"
             }
         };
-
-        public IEnumerator<object[]> GetEnumerator() => _data.GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }
