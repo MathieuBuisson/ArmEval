@@ -18,24 +18,34 @@ namespace ArmEval.Core.Tests.TestData
 
         private readonly List<object[]> _data = new List<object[]>
         {
-            // Object properties represent (respectively) : expression text, output type, input variables
-            new object[] {@"[variables('vmName')]", ArmValueTypes.@string, new List<ArmTemplateVariable>()
+            // Object properties represent (respectively) : expression, input variables
+            new object[] {new ArmTemplateExpression(@"[variables('name')]"), new List<ArmTemplateVariable>()
                 {
-                    new ArmTemplateVariable("vmName", "testVm")
+                    new ArmTemplateVariable("name", "testVm")
                 }
             },
-            new object[] {@"[add(variables('number1'), 9)]", ArmValueTypes.@int, new List<ArmTemplateVariable>()
+            new object[] {new ArmTemplateExpression(@"[add(variables('num1'), 9)]"), new List<ArmTemplateVariable>()
                 {
-                    new ArmTemplateVariable("number1", 8)
+                    new ArmTemplateVariable("num1", 8)
                 }
             },
-            new object[] {@"[mul(variables('var1'), variables('var2'))]", ArmValueTypes.@int, new List<ArmTemplateVariable>()
+            new object[] {new ArmTemplateExpression(@"[mul(variables('var1'), variables('var2'))]"), new List<ArmTemplateVariable>()
                 {
                     new ArmTemplateVariable("var1", 3),
                     new ArmTemplateVariable("var2", 7)
                 }
             },
-            new object[] {@"[variables('obj').Property2]", ArmValueTypes.@object, new List<ArmTemplateVariable>()
+            new object[] {new ArmTemplateExpression(@"[not(variables('boolTrue'))]"), new List<ArmTemplateVariable>()
+                {
+                    new ArmTemplateVariable("boolTrue", true)
+                }
+            },
+            new object[] {new ArmTemplateExpression(@"[take(variables('testArray'), 2)]"), new List<ArmTemplateVariable>()
+                {
+                    new ArmTemplateVariable("testArray", new string[]{ "one", "two", "three" })
+                }
+            },
+            new object[] {new ArmTemplateExpression(@"[variables('obj').Property2]"), new List<ArmTemplateVariable>()
                 {
                     new ArmTemplateVariable("obj", new {Property1 = "customString", Property2 = true})
                 }

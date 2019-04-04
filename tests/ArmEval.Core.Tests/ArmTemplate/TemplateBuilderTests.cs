@@ -1,8 +1,11 @@
 ﻿using ArmEval.Core.ArmTemplate;
+using ArmEval.Core.Tests.TestData;
 using ArmEval.Core.UserInputs;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Text;
 using Xunit;
 
@@ -60,6 +63,64 @@ namespace ArmEval.Core.Tests.ArmTemplate
             Assert.IsType<JObject>(actual);
             Assert.Equal(expectedOutputType.ToString(), actual["Type"].ToString());
             Assert.Equal(expressionText, actual["Value"].ToString());
+        }
+
+        [Fact]
+        public void AddVariables_NullInputVariables_ThrowExpectedException()
+        {
+            var expression = new ArmTemplateExpression(@"[createArray(1, variables('num2'), variables('num3'))]");
+            var sut = new TemplateBuilder();
+            var expectedErrorMessage = "Specify a value for the following variable(s) : num2, num3";
+
+            Action act = () => { sut.AddVariables(expression, null); };
+            var ex = Record.Exception(act);
+
+            Assert.IsType<ArgumentNullException>(ex);
+            Assert.StartsWith(expectedErrorMessage, ex.Message);
+        }
+        [Fact]
+        public void AddVariables_MissingInputVariables_ThrowExpectedException()
+        {
+            var expression = new ArmTemplateExpression(@"[createArray(1, variables('num2'), variables('num3'))]");
+            var inputVariables = new List<ArmTemplateVariable>(){ new ArmTemplateVariable("NotUsed", 0), new ArmTemplateVariable("num3", 3) };
+            var sut = new TemplateBuilder();
+            var expectedErrorMessage = "Specify a value for the following variable(s) : num2";
+
+            Action act = () => { sut.AddVariables(expression, inputVariables); };
+            var ex = Record.Exception(act);
+
+            Assert.IsType<ArgumentNullException>(ex);
+            Assert.StartsWith(expectedErrorMessage, ex.Message);
+        }
+
+        [Theory]
+        [InputVariablesTestData]
+        public void AddVariables_ValidInputVariables_SetsExpectedTemplateVariables(
+            ArmTemplateExpression expression,
+            List<ArmTemplateVariable> inputVariables
+        )
+        {
+            var actual = new TemplateBuilder()
+                .AddVariables(expression, inputVariables)
+                .Template["variables"];
+
+            Assert.IsType<JObject>(actual);
+            foreach (var v in inputVariables)
+            {
+                if (v.Value.GetType().FullName.Contains("AnonymousType"))
+                {
+                    foreach (var property in v.Value.GetType().GetProperties().OfType<PropertyInfo>())
+                    {
+                        var expectedValueString = property.GetValue(v.Value).ToString();
+                        var actualValueString = actual[v.Name][property.Name].ToString();
+                        Assert.Equal(expectedValueString, actualValueString);
+                    }
+                }
+                else
+                {
+                    Assert.Equal(actual[v.Name], v.Value);
+                }
+            }
         }
     }
 }

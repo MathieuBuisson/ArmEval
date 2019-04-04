@@ -33,7 +33,7 @@ namespace ArmEval.Core.UserInputs
         {
             if (string.IsNullOrEmpty(expressionText))
             {
-                throw new ArgumentNullException("expressionText");
+                throw new ArgumentNullException(nameof(expressionText));
             }
             text = expressionText;
             Text = expressionText;

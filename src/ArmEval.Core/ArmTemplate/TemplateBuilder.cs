@@ -53,7 +53,7 @@ namespace ArmEval.Core.ArmTemplate
                 JObject variablesObj = new JObject();
                 foreach (var inputVar in inputVariables)
                 {
-                    variablesObj.Add(new JProperty(inputVar.Name, inputVar.Value));
+                    variablesObj.Add(new JProperty(inputVar.Name, JToken.FromObject(inputVar.Value)));
                 }
                 Template["variables"] = variablesObj;
             }
@@ -69,7 +69,7 @@ namespace ArmEval.Core.ArmTemplate
             if (missingVariables.Any())
             {
                 var missingString = string.Join(", ", missingVariables);
-                throw new ArgumentNullException($"Specify a value for the following variable(s) : {missingString}");
+                throw new ArgumentNullException(nameof(inputVariables), $"Specify a value for the following variable(s) : {missingString}");
             }
         }
     }

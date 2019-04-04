@@ -113,7 +113,7 @@ namespace ArmEval.Core.Tests.UserInputs
 
         [Theory()]
         [ExpressionWithVariablesTestData]
-        public void Invoke_WithVariables_ReturnsExpectedVariablesAndOutput(
+        public void Invoke_WithVariables_ReturnsExpectedOutput(
             string text,
             ICollection<ArmTemplateVariable> inputVariables,
             ArmValueTypes expectedOutputType,
