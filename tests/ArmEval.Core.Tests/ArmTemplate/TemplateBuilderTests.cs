@@ -70,12 +70,12 @@ namespace ArmEval.Core.Tests.ArmTemplate
         {
             var expression = new ArmTemplateExpression(@"[createArray(1, variables('num2'), variables('num3'))]");
             var sut = new TemplateBuilder();
-            var expectedErrorMessage = "Specify a value for the following variable(s) : num2, num3";
+            var expectedErrorMessage = "Enter a value for the following variable/parameter : num2";
 
             Action act = () => { sut.AddVariables(expression, null); };
             var ex = Record.Exception(act);
 
-            Assert.IsType<ArgumentNullException>(ex);
+            Assert.IsType<ExpressionInputsException>(ex);
             Assert.StartsWith(expectedErrorMessage, ex.Message);
         }
         [Fact]
@@ -84,12 +84,12 @@ namespace ArmEval.Core.Tests.ArmTemplate
             var expression = new ArmTemplateExpression(@"[createArray(1, variables('num2'), variables('num3'))]");
             var inputVariables = new List<ArmTemplateVariable>(){ new ArmTemplateVariable("NotUsed", 0), new ArmTemplateVariable("num3", 3) };
             var sut = new TemplateBuilder();
-            var expectedErrorMessage = "Specify a value for the following variable(s) : num2";
+            var expectedErrorMessage = "Enter a value for the following variable/parameter : num2";
 
             Action act = () => { sut.AddVariables(expression, inputVariables); };
             var ex = Record.Exception(act);
 
-            Assert.IsType<ArgumentNullException>(ex);
+            Assert.IsType<ExpressionInputsException>(ex);
             Assert.StartsWith(expectedErrorMessage, ex.Message);
         }
 

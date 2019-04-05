@@ -48,7 +48,7 @@ namespace ArmEval.Core.ArmTemplate
             // Adding input variables to the template only if the expression references variable(s)
             if (expression.VariableNames.Any())
             {
-                CheckExpressionVariablesAreInInput(expression, inputVariables);
+                CheckForMissingInputs(expression, inputVariables);
 
                 JObject variablesObj = new JObject();
                 foreach (var inputVar in inputVariables)
@@ -60,16 +60,41 @@ namespace ArmEval.Core.ArmTemplate
             return this;
         }
 
-        private void CheckExpressionVariablesAreInInput(ArmTemplateExpression expression, ICollection<ArmTemplateVariable> inputVariables)
+        public TemplateBuilder AddParameters(ArmTemplateExpression expression, ICollection<ArmTemplateParameter> inputParameters)
         {
-            var missingVariables = inputVariables is null ?
-                expression.VariableNames :
-                expression.VariableNames.Except(inputVariables.Select(v => v.Name));
-
-            if (missingVariables.Any())
+            // Adding input variables to the template only if the expression references parameters(s)
+            if (expression.ParameterNames.Any())
             {
-                var missingString = string.Join(", ", missingVariables);
-                throw new ArgumentNullException(nameof(inputVariables), $"Specify a value for the following variable(s) : {missingString}");
+                CheckForMissingInputs(expression, inputParameters);
+
+                JObject paramsObj = new JObject();
+                foreach (var inputParam in inputParameters)
+                {
+                    paramsObj.Add(
+                        new JProperty(inputParam.Name,
+                            new JObject(new JProperty("defaultValue", JToken.FromObject(inputParam.Value))),
+                            new JObject(new JProperty("type", JToken.FromObject(inputParam.Type)))
+                        )
+                    );
+                }
+            }
+            return this;
+        }
+
+        private void CheckForMissingInputs<T>(ArmTemplateExpression expression, ICollection<T> inputs) where T : IArmTemplateInput
+        {
+            var referencesInExpression = typeof(T) == typeof(ArmTemplateVariable)
+                ? expression.VariableNames
+                : expression.ParameterNames;
+
+            var missingInputs = inputs == null || inputs.Equals(default(T))
+                ? referencesInExpression
+                : referencesInExpression.Except(inputs.Select(i => i.Name));
+
+            if (missingInputs.Any())
+            {
+                missingInputs.ToList()
+                    .ForEach(missingInput => throw new ExpressionInputsException(missingInput));
             }
         }
     }
