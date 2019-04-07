@@ -109,7 +109,7 @@ namespace ArmEval.Core.Tests.ArmTemplate
             {
                 if (v.Value.GetType().FullName.Contains("AnonymousType"))
                 {
-                    foreach (var property in v.Value.GetType().GetProperties().OfType<PropertyInfo>())
+                    foreach (var property in v.Value.GetType().GetProperties())
                     {
                         var expectedValueString = property.GetValue(v.Value).ToString();
                         var actualValueString = actual[v.Name][property.Name].ToString();

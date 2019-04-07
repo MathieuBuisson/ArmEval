@@ -130,5 +130,26 @@ namespace ArmEval.Core.Tests.UserInputs
 
             Assert.Equal(expectedoutputString, actual.ToString());
         }
+
+        [Theory]
+        [ExpressionWithParametersTestData]
+        public void Invoke_WithParameters_ReturnsExpectedOutput(
+            string text,
+            ICollection<ArmTemplateParameter> inputParameters,
+            ICollection<ArmTemplateVariable> inputVariables,
+            ArmValueTypes expectedOutputType,
+            string outputValue,
+            string expectedoutputString
+        )
+        {
+            var expression = new ArmTemplateExpression(text);
+            var deployment = new MockArmDeployment()
+                .MockInvoke(expectedOutputType.ToString(), outputValue)
+                .Object;
+
+            var actual = expression.Invoke(deployment, expectedOutputType, inputParameters, inputVariables);
+
+            Assert.Equal(expectedoutputString, actual.ToString());
+        }
     }
 }
