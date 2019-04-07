@@ -122,5 +122,76 @@ namespace ArmEval.Core.Tests.ArmTemplate
                 }
             }
         }
+
+        [Fact]
+        public void AddParameters_NullOrEmptyInputParameters_ThrowExpectedException()
+        {
+            var expression = new ArmTemplateExpression(@"[createArray(1, parameters('num2'), parameters('num3'))]");
+            var sut = new TemplateBuilder();
+            var expectedErrorMessage = "Enter a value for the following variable/parameter : num2";
+
+            Action act = () => { sut.AddParameters(expression, new List<ArmTemplateParameter>()); };
+            var ex = Record.Exception(act);
+
+            Assert.IsType<ExpressionInputsException>(ex);
+            Assert.StartsWith(expectedErrorMessage, ex.Message);
+        }
+
+        [Fact]
+        public void AddParameters_MissingInputParameters_ThrowExpectedException()
+        {
+            var expression = new ArmTemplateExpression(@"[createArray(1, parameters('num2'), parameters('num3'))]");
+            var inputParameters = new List<ArmTemplateParameter>() { new ArmTemplateParameter("num3", 3, "int") };
+            var sut = new TemplateBuilder();
+            var expectedErrorMessage = "Enter a value for the following variable/parameter : num2";
+
+            Action act = () => { sut.AddParameters(expression, inputParameters); };
+            var ex = Record.Exception(act);
+
+            Assert.IsType<ExpressionInputsException>(ex);
+            Assert.StartsWith(expectedErrorMessage, ex.Message);
+        }
+
+        [Theory]
+        [InputParametersTestData]
+        public void AddParameters_ValidInputParameters_SetsExpectedTemplateParameters(
+            ArmTemplateExpression expression,
+            List<ArmTemplateParameter> inputParameters
+        )
+        {
+            var actual = new TemplateBuilder()
+                .AddParameters(expression, inputParameters)
+                .Template["parameters"];
+
+            Assert.IsType<JObject>(actual);
+            foreach (var p in inputParameters)
+            {
+                if (p.Type == "object")
+                {
+                    Assert.Equal(p.Type, actual[p.Name]["type"].ToString());
+                    //foreach (var property in p.Value.GetType().GetProperties())
+                    //{
+                    //    var expectedValueString = property.GetValue(p.Value).ToString();
+                    //    var actualValueString = actual[p.Name][property.Name].ToString();
+                    //    Assert.Equal(expectedValueString, actualValueString);
+                    //}
+                }
+                else if (p.Type == "array")
+                {
+                    Assert.Equal(p.Type, actual[p.Name]["type"]);
+
+                    var valueArray = (Array)p.Value;
+                    foreach (var i in valueArray)
+                    {
+                        Assert.Contains($"{i.ToString()}", actual[p.Name]["defaultValue"].ToString());
+                    }
+                }
+                else
+                {
+                    Assert.Equal(p.Type, actual[p.Name]["type"]);
+                    Assert.Equal(p.Value.ToString(), actual[p.Name]["defaultValue"].ToString());
+                }
+            }
+        }
     }
 }
