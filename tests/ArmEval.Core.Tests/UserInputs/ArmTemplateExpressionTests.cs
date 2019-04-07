@@ -86,7 +86,7 @@ namespace ArmEval.Core.Tests.UserInputs
             var expression = new ArmTemplateExpression(@"[not(true)]");
             var expectedOutputType = ArmValueTypes.@bool;
 
-            Action act = () => { expression.Invoke(null, expectedOutputType, null); };
+            Action act = () => { expression.Invoke(null, expectedOutputType, null, null); };
             var ex = Record.Exception(act);
 
             Assert.IsType<ArgumentNullException>(ex);
@@ -106,7 +106,7 @@ namespace ArmEval.Core.Tests.UserInputs
                 .MockInvoke(expectedOutputType.ToString(), outputValue)
                 .Object;
 
-            var actual = expression.Invoke(deployment, expectedOutputType, null);
+            var actual = expression.Invoke(deployment, expectedOutputType, null, null);
 
             Assert.Equal(expectedoutputString, actual.ToString());
         }
@@ -126,7 +126,7 @@ namespace ArmEval.Core.Tests.UserInputs
                 .MockInvoke(expectedOutputType.ToString(), outputValue)
                 .Object;
 
-            var actual = expression.Invoke(deployment, expectedOutputType, inputVariables);
+            var actual = expression.Invoke(deployment, expectedOutputType, null, inputVariables);
 
             Assert.Equal(expectedoutputString, actual.ToString());
         }

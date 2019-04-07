@@ -53,7 +53,7 @@ namespace ArmEval.Core.Tests.TestData
             },
             new object[]
             {
-                @"[not(equals(1, variables('intTen'))]",
+                @"[not(equals(1, variables('intTen')))]",
                 new List<ArmTemplateVariable>(){ new ArmTemplateVariable("intTen", 10) },
                 ArmValueTypes.@bool,
                 "true",

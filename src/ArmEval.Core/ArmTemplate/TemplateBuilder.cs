@@ -72,11 +72,14 @@ namespace ArmEval.Core.ArmTemplate
                 {
                     paramsObj.Add(
                         new JProperty(inputParam.Name,
-                            new JObject(new JProperty("defaultValue", JToken.FromObject(inputParam.Value))),
-                            new JObject(new JProperty("type", JToken.FromObject(inputParam.Type)))
+                            new JObject {
+                                { "type", JToken.FromObject(inputParam.Type) },
+                                { "defaultValue", JToken.FromObject(inputParam.Value) }
+                            }
                         )
                     );
                 }
+                Template["parameters"] = paramsObj;
             }
             return this;
         }

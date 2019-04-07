@@ -19,16 +19,21 @@ namespace ArmEval.Cli
                 var app = scope.Resolve<IApplication>();
                 app.Init();
 
-                var expression = new ArmTemplateExpression(@"[variables('obj').Property1]");
+                var expression = new ArmTemplateExpression(@"[parameters('obj').Property1]");
                 
                 var deployment = new ArmDeployment(app.Client, app.ResourceGroup);
                 var inputVariables = new List<ArmTemplateVariable>()
                 {
-                    new ArmTemplateVariable("obj", new {Property1 = "customString", Property2 = true})
+                    new ArmTemplateVariable("num2", 7)
                 };
+                var inputParams = new List<ArmTemplateParameter>()
+                {
+                    new ArmTemplateParameter("obj", new {Property1 = "customString", Property2 = true}, "object")
+                };
+
                 try
                 {
-                    var result = expression.Invoke(deployment, ArmValueTypes.@string, inputVariables);
+                    var result = expression.Invoke(deployment, ArmValueTypes.@string, inputParams, inputVariables);
                     Console.WriteLine(result);
                 }
                 catch (Exception ex)
