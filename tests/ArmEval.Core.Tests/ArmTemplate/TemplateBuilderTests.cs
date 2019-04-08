@@ -66,17 +66,14 @@ namespace ArmEval.Core.Tests.ArmTemplate
         }
 
         [Fact]
-        public void AddVariables_NullInputVariables_ThrowExpectedException()
+        public void AddVariables_NullInputVariables_AddMissingInputsOfTypeVariable()
         {
             var expression = new ArmTemplateExpression(@"[createArray(1, variables('num2'), variables('num3'))]");
             var sut = new TemplateBuilder();
-            var expectedErrorMessage = "Enter a value for the following variable/parameter : num2";
+            sut.AddVariables(expression, null);
 
-            Action act = () => { sut.AddVariables(expression, null); };
-            var ex = Record.Exception(act);
-
-            Assert.IsType<ExpressionInputsException>(ex);
-            Assert.StartsWith(expectedErrorMessage, ex.Message);
+            Assert.Equal(2, sut.MissingInputs.Count());
+            Assert.All(sut.MissingInputs, m => m.InputType.Equals(InputTypes.Variable));
         }
         [Fact]
         public void AddVariables_MissingInputVariables_ThrowExpectedException()
@@ -84,13 +81,11 @@ namespace ArmEval.Core.Tests.ArmTemplate
             var expression = new ArmTemplateExpression(@"[createArray(1, variables('num2'), variables('num3'))]");
             var inputVariables = new List<ArmTemplateVariable>(){ new ArmTemplateVariable("NotUsed", 0), new ArmTemplateVariable("num3", 3) };
             var sut = new TemplateBuilder();
-            var expectedErrorMessage = "Enter a value for the following variable/parameter : num2";
+            sut.AddVariables(expression, inputVariables);
 
-            Action act = () => { sut.AddVariables(expression, inputVariables); };
-            var ex = Record.Exception(act);
-
-            Assert.IsType<ExpressionInputsException>(ex);
-            Assert.StartsWith(expectedErrorMessage, ex.Message);
+            Assert.Single(sut.MissingInputs);
+            Assert.All(sut.MissingInputs, m => m.InputType.Equals(InputTypes.Variable));
+            Assert.Contains(sut.MissingInputs, m => m.Name == "num2");
         }
 
         [Theory]
@@ -128,13 +123,10 @@ namespace ArmEval.Core.Tests.ArmTemplate
         {
             var expression = new ArmTemplateExpression(@"[createArray(1, parameters('num2'), parameters('num3'))]");
             var sut = new TemplateBuilder();
-            var expectedErrorMessage = "Enter a value for the following variable/parameter : num2";
+            sut.AddParameters(expression, new List<ArmTemplateParameter>());
 
-            Action act = () => { sut.AddParameters(expression, new List<ArmTemplateParameter>()); };
-            var ex = Record.Exception(act);
-
-            Assert.IsType<ExpressionInputsException>(ex);
-            Assert.StartsWith(expectedErrorMessage, ex.Message);
+            Assert.Equal(2, sut.MissingInputs.Count());
+            Assert.All(sut.MissingInputs, m => m.InputType.Equals(InputTypes.Parameter));
         }
 
         [Fact]
@@ -143,13 +135,11 @@ namespace ArmEval.Core.Tests.ArmTemplate
             var expression = new ArmTemplateExpression(@"[createArray(1, parameters('num2'), parameters('num3'))]");
             var inputParameters = new List<ArmTemplateParameter>() { new ArmTemplateParameter("num3", 3, "int") };
             var sut = new TemplateBuilder();
-            var expectedErrorMessage = "Enter a value for the following variable/parameter : num2";
+            sut.AddParameters(expression, inputParameters);
 
-            Action act = () => { sut.AddParameters(expression, inputParameters); };
-            var ex = Record.Exception(act);
-
-            Assert.IsType<ExpressionInputsException>(ex);
-            Assert.StartsWith(expectedErrorMessage, ex.Message);
+            Assert.Single(sut.MissingInputs);
+            Assert.All(sut.MissingInputs, m => m.InputType.Equals(InputTypes.Parameter));
+            Assert.Contains(sut.MissingInputs, m => m.Name == "num2");
         }
 
         [Theory]

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ArmEval.Core.ArmTemplate
+﻿namespace ArmEval.Core.ArmTemplate
 {
     public enum ArmValueTypes
     {
