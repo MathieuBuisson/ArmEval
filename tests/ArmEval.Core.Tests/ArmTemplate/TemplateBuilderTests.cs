@@ -169,17 +169,15 @@ namespace ArmEval.Core.Tests.ArmTemplate
                 if (p.Type == "object")
                 {
                     Assert.Equal(p.Type, actual[p.Name]["type"].ToString());
-                    //foreach (var property in p.Value.GetType().GetProperties())
-                    //{
-                    //    var expectedValueString = property.GetValue(p.Value).ToString();
-                    //    var actualValueString = actual[p.Name][property.Name].ToString();
-                    //    Assert.Equal(expectedValueString, actualValueString);
-                    //}
+                    foreach (var property in p.Value.GetType().GetProperties())
+                    {
+                        var actualValueString = actual[p.Name]["defaultValue"][property.Name].ToString();
+                        Assert.Equal(property.GetValue(p.Value).ToString(), actualValueString);
+                    }
                 }
                 else if (p.Type == "array")
                 {
                     Assert.Equal(p.Type, actual[p.Name]["type"]);
-
                     var valueArray = (Array)p.Value;
                     foreach (var i in valueArray)
                     {
