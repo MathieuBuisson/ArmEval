@@ -1,4 +1,5 @@
 ﻿using System;
+using static System.Console;
 using ArmEval.Core.ArmTemplate;
 using ArmEval.Core.ArmClient;
 using ArmEval.Core.UserInputs;
@@ -33,12 +34,16 @@ namespace ArmEval.Cli
 
                 try
                 {
-                    var result = expression.Invoke(deployment, ArmValueTypes.@string, inputParams, inputVariables);
-                    Console.WriteLine(result);
+                    var result = expression.Invoke(deployment, ArmValueTypes.@string, null, inputVariables);
+                    if (result is List<MissingInput>)
+                    {
+                        var missingInputs = result as List<MissingInput>;
+                        missingInputs.ForEach(m => WriteLine($"Please enter a value for {m.InputType} \"{m.Name}\"."));
+                    }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.Message);
+                    WriteLine(ex.Message);
                 }
                 finally
                 {

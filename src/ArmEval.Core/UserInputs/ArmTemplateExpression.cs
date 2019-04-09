@@ -74,12 +74,17 @@ namespace ArmEval.Core.UserInputs
                 throw new ArgumentNullException(nameof(deployment));
             }
 
-            var template = new TemplateBuilder()
+            var templateBuilder = new TemplateBuilder()
                 .AddExpression(this, expectedOutputType)
                 .AddParameters(this, inputParameters)
-                .AddVariables(this, inputVariables)
-                .Template;
-            deployment.Deployment.Properties.Template = template;
+                .AddVariables(this, inputVariables);
+
+            if (templateBuilder.MissingInputs.Any())
+            {
+                return templateBuilder.MissingInputs;
+            }
+
+            deployment.Deployment.Properties.Template = templateBuilder.Template;
 
             string deploymentOutputs = deployment.Invoke();
             var expressionOutput = JToken.Parse(deploymentOutputs)["expression"];

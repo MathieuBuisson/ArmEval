@@ -28,7 +28,7 @@ namespace ArmEval.Core.Tests.UserInputs
             client = new Mock<IResourceManagementClient>().Object;
         }
 
-        [Theory()]
+        [Theory]
         [InlineData(@"[uniqueString(resourceGroup().id, deployment().name)]")]
         [InlineData(@"[resourceGroup().name]")]
         [InlineData(@"[concat('string123', 'string456')]")]
@@ -46,7 +46,7 @@ namespace ArmEval.Core.Tests.UserInputs
             Assert.Throws<ArgumentNullException>(() => new ArmTemplateExpression(null));
         }
 
-        [Theory()]
+        [Theory]
         [InlineData(@"[[test]")]
         [InlineData(@"[!test]")]
         [InlineData(@"[]")]
@@ -55,7 +55,7 @@ namespace ArmEval.Core.Tests.UserInputs
             Assert.Throws<FormatException>(() => new ArmTemplateExpression(text));
         }
 
-        [Theory()]
+        [Theory]
         [InlineData(@"[resourceId('Microsoft.Storage/storageAccounts','examplestorage')]")]
         [InlineData(@"[reference(test)]")]
         [InlineData(@"[listKeys(parameters('storagename'), '2018-02-01')]")]
@@ -64,7 +64,7 @@ namespace ArmEval.Core.Tests.UserInputs
             Assert.Throws<NotSupportedException>(() => new ArmTemplateExpression(text));
         }
 
-        [Theory()]
+        [Theory]
         [InlineData(@"[uniqueString(resourceGroup().id, deployment().name)]", new string[] {}, new string[] {})]
         [InlineData(@"[resourceGroup().name]", new string[] {}, new string[] {})]
         [InlineData(@"[variables('vmName')]", new string[] {"vmName"}, new string[] {})]
@@ -92,7 +92,7 @@ namespace ArmEval.Core.Tests.UserInputs
             Assert.IsType<ArgumentNullException>(ex);
         }
 
-        [Theory()]
+        [Theory]
         [ExpressionTestData]
         public void Invoke_NoVariableOrParameter_ReturnsExpectedOutput(
             string text,
@@ -111,7 +111,7 @@ namespace ArmEval.Core.Tests.UserInputs
             Assert.Equal(expectedoutputString, actual.ToString());
         }
 
-        [Theory()]
+        [Theory]
         [ExpressionWithVariablesTestData]
         public void Invoke_WithVariables_ReturnsExpectedOutput(
             string text,
@@ -139,7 +139,7 @@ namespace ArmEval.Core.Tests.UserInputs
             ICollection<ArmTemplateVariable> inputVariables,
             ArmValueTypes expectedOutputType,
             string outputValue,
-            string expectedoutputString
+            string expectedOutputString
         )
         {
             var expression = new ArmTemplateExpression(text);
@@ -149,7 +149,36 @@ namespace ArmEval.Core.Tests.UserInputs
 
             var actual = expression.Invoke(deployment, expectedOutputType, inputParameters, inputVariables);
 
-            Assert.Equal(expectedoutputString, actual.ToString());
+            Assert.Equal(expectedOutputString, actual.ToString());
+        }
+
+        [Theory]
+        [ExpressionWithMissingInputsTestData]
+        public void Invoke_MissingInputs_ReturnsExpectedMissingInputs(
+            string text,
+            ICollection<ArmTemplateParameter> inputParameters,
+            ICollection<ArmTemplateVariable> inputVariables,
+            ICollection<MissingInput> expectedMissingInputs
+        )
+        {
+            var expression = new ArmTemplateExpression(text);
+            var deployment = new MockArmDeployment()
+                .MockInvoke("string", "value")
+                .Object;
+
+            var actual = expression.Invoke(deployment, ArmValueTypes.@string, inputParameters, inputVariables);
+
+            Assert.IsType<List<MissingInput>>(actual);
+
+            var missingInputs = actual as List<MissingInput>;
+            Assert.Equal(expectedMissingInputs.Count, missingInputs.Count);
+            Assert.All(expectedMissingInputs, e =>
+            {
+                Assert.Contains(missingInputs, a =>
+                {
+                    return a.Name == e.Name && a.InputType == e.InputType;
+                });
+            });
         }
     }
 }
