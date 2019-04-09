@@ -1,11 +1,11 @@
 ﻿using System;
-using static System.Console;
 using ArmEval.Core.ArmTemplate;
 using ArmEval.Core.ArmClient;
 using ArmEval.Core.UserInputs;
 using ArmEval.Core.Extensions;
 using Autofac;
 using System.Collections.Generic;
+using static System.Console;
 
 namespace ArmEval.Cli
 {
