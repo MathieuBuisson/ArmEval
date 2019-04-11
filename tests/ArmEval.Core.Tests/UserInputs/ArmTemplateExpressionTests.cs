@@ -53,6 +53,7 @@ namespace ArmEval.Core.Tests.UserInputs
         [InlineData(@"[resourceId('Microsoft.Storage/storageAccounts','examplestorage')]")]
         [InlineData(@"[reference(test)]")]
         [InlineData(@"[listKeys(parameters('storagename'), '2018-02-01')]")]
+        [InlineData(@"[resourceGroup().name]")]
         public void Constructor_UnsupportedFunctions_ThrowsNotSupportedException(string text)
         {
             Assert.Throws<NotSupportedException>(() => new ArmTemplateExpression(text));
