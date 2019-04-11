@@ -21,7 +21,6 @@ namespace ArmEval.Cli
             builder.RegisterInstance(config).As<IConfigurationRoot>();
             builder.RegisterInstance(creds).As<ServiceClientCredentials>();
             builder.RegisterType<ResourceManagementClient>().As<IResourceManagementClient>();
-            builder.RegisterType<ResourceGroup>();
             builder.RegisterType<Application>().As<IApplication>();
 
             return builder.Build();

@@ -14,16 +14,12 @@ namespace ArmEval.Core.Tests.ArmClient
     {
         private readonly IResourceManagementClient client;
         private readonly string location;
-        private readonly string rgName;
         private readonly JObject emptyTemplate;
-        private readonly ResourceGroup resourceGroup;
 
         public ArmDeploymentTests()
         {
             emptyTemplate = new TemplateBuilder().Template;
             location = "North Europe";
-            rgName = $"ArmEvalDeploy-{UniqueString.Create()}";
-            resourceGroup = new ResourceGroup(location, name: rgName);
 
             client = new Mock<IResourceManagementClient>().Object;
         }
@@ -31,13 +27,12 @@ namespace ArmEval.Core.Tests.ArmClient
         [Fact]
         public void Constructor_SetsAllProperties()
         {
-            var actual = new ArmDeployment(client, resourceGroup);
+            var actual = new ArmDeployment(client, location);
 
             Assert.Same(client, actual.Client);
-            Assert.Same(rgName, actual.ResourceGroup.Name);
-            Assert.Same(location, actual.ResourceGroup.Location);
             Assert.Matches(@"^armeval-deployment-\w{5}$", actual.DeploymentName);
             Assert.IsType<Deployment>(actual.Deployment);
+            Assert.Same(location, actual.Deployment.Location);
             Assert.Equal(emptyTemplate, actual.Deployment.Properties.Template);
             Assert.Equal(DeploymentMode.Incremental, actual.Deployment.Properties.Mode);
         }

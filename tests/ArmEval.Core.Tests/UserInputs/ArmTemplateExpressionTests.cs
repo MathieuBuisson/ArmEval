@@ -16,21 +16,15 @@ namespace ArmEval.Core.Tests.UserInputs
     {
         private readonly IResourceManagementClient client;
         private readonly string location;
-        private readonly string rgName;
-        private readonly ResourceGroup resourceGroup;
 
         public ArmTemplateExpressionTests()
         {
             location = "North Europe";
-            rgName = $"ArmEvalDeploy-{UniqueString.Create()}";
-            resourceGroup = new ResourceGroup(location, name: rgName);
-
             client = new Mock<IResourceManagementClient>().Object;
         }
 
         [Theory]
-        [InlineData(@"[uniqueString(resourceGroup().id, deployment().name)]")]
-        [InlineData(@"[resourceGroup().name]")]
+        [InlineData(@"[uniqueString(deployment().name)]")]
         [InlineData(@"[concat('string123', 'string456')]")]
         [InlineData(@"[add(variables('number1'), parameters('number2'))]")]
         public void Constructor_ValidExpressions_SetsText(string text)
@@ -65,10 +59,9 @@ namespace ArmEval.Core.Tests.UserInputs
         }
 
         [Theory]
-        [InlineData(@"[uniqueString(resourceGroup().id, deployment().name)]", new string[] {}, new string[] {})]
-        [InlineData(@"[resourceGroup().name]", new string[] {}, new string[] {})]
+        [InlineData(@"[uniqueString(deployment().name)]", new string[] {}, new string[] {})]
         [InlineData(@"[variables('vmName')]", new string[] {"vmName"}, new string[] {})]
-        [InlineData(@"[parameters('location')]", new string[] {}, new string[] {"location"})]
+        [InlineData(@"[parameters('testParam')]", new string[] {}, new string[] { "testParam" })]
         [InlineData(@"[add(variables('number1'), parameters('number2'))]", new string[] {"number1"}, new string[] {"number2"})]
         [InlineData(@"[add(variables('number1'), variables('number2'))]", new string[] {"number1", "number2"}, new string[] {})]
         public void Constructor_ValidExpressions_SetsVariablesAndParameters(string text, string[] expectedVariables, string[] expectedParameters)

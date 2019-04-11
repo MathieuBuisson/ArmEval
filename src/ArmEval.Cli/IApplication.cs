@@ -7,7 +7,6 @@ namespace ArmEval.Cli
     {
         string AzureRegion { get; }
         IResourceManagementClient Client { get; }
-        ResourceGroup ResourceGroup { get; set; }
 
         void Init();
     }
