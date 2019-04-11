@@ -26,7 +26,10 @@ namespace ArmEval.Core.UserInputs
         public readonly Regex[] unsupportedFunctionsPatterns = {
             new Regex(@"resourceId\("),
             new Regex(@"reference\("),
-            new Regex(@"list.*\(")
+            new Regex(@"list.*\("),
+
+            // Not supported by subscription-level deployments (https://docs.microsoft.com/en-us/azure/azure-resource-manager/deploy-to-subscription#use-template-functions)
+            new Regex(@"resourceGroup\(")
         };
 
         public ArmTemplateExpression(string expressionText)

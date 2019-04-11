@@ -8,7 +8,7 @@ namespace ArmEval.Core.ArmClient
         IResourceManagementClient Client { get; set; }
         Deployment Deployment { get; set; }
         string DeploymentName { get; }
-        ResourceGroup ResourceGroup { get; set; }
+        string Location { get; set; }
 
         string Invoke();
     }
