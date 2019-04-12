@@ -19,6 +19,7 @@ namespace ArmEval.Core.ArmTemplate
   'contentVersion': '1.0.0.0',
   'parameters': {},
   'variables': {},
+  'functions': [],
   'resources': [],
   'outputs': {}
 }";

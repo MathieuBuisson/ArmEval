@@ -31,6 +31,7 @@ namespace ArmEval.Core.Tests.ArmTemplate
             Assert.IsType<JValue>(actual["contentVersion"]);
             Assert.IsType<JObject>(actual["parameters"]);
             Assert.IsType<JObject>(actual["variables"]);
+            Assert.IsType<JArray>(actual["functions"]);
             Assert.IsType<JArray>(actual["resources"]);
             Assert.IsType<JObject>(actual["outputs"]);
         }
