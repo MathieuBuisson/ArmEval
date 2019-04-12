@@ -1,5 +1,5 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
     "clusterName": {
@@ -115,6 +115,33 @@
     "subnetName": "[concat('aks-subnet-', variables('uniqueSuffix'))]",
     "containerInsightsSolutionName": "[Concat('ContainerInsights(', variables('logAnalyticsWorkspaceName'), ')')]"
   },
+  "functions": [
+    {
+      "namespace": "armEval",
+      "members": {
+        "getNicName": {
+          "parameters": [
+            {
+              "name": "prefix",
+              "type": "string"
+            },
+            {
+              "name": "vmType",
+              "type": "string"
+            },
+            {
+              "name": "id",
+              "type": "string"
+            }
+          ],
+          "output": {
+            "type": "string",
+            "value": "[concat(toLower(parameters('prefix')),'-',parameters('vmType'),'-nic-',padLeft(parameters('id'),2,'0'))]"
+          }
+        }
+      }
+    }
+  ],
   "resources": [
     {
       "type": "Microsoft.OperationalInsights/workspaces",
